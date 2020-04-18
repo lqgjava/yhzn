@@ -1,0 +1,234 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yhzn.dao.storehouse.OutStockDao">
+
+	<sql id="Base_Column_List">
+	    ID,OUT_NO,OUT_NAME,REASON,STATUS,OUT_STATUS,USER_ID,REMARK,CREATE_NAME,NOT_PASS,CHECK_USER,CHECK_USER_ID
+	  </sql>
+	<sql id="Out_Column_List">
+       ID,OUT_ID,OUT_NO,TYPE,SERIAL_NUMBER,NAME,STANDARD,MODEL,UNIT,BRAND,UNIT_PRICE,COST_PRICE,AMOUNT,TOTAL_PRICE,OUT_AMOUNT,STATUS,REMARK,SUPPLIER,PRODUCT_ID
+   </sql>
+	  
+	<select id="queryOutStockList" parameterType="map" resultType="com.yhzn.model.storehouse.OutStock">
+     select
+       <include refid="Base_Column_List"/>,
+       to_char(CHECK_DATE,'yyyy/mm/dd') as checkDateStr,
+       to_char(CREATE_DATE,'yyyy/mm/dd') as createDateStr
+    from OUT_STOCK
+    where 1 = 1 
+    and DELETE_FLAG='0'
+     <if test="outNo != null and outNo != ''">
+        and OUT_NO like '%${outNo}%'
+      </if>
+      <if test="outName != null and outName != ''">
+        and OUT_NAME like '%${outName}%'
+      </if>
+      <if test="userId != null and userId != ''">
+        and USER_ID like '%${userId}%'
+      </if>
+      ORDER BY CREATE_DATE DESC
+  </select>
+  
+  <update id="deleteOutStockById" parameterType="java.lang.String">
+    update  OUT_STOCK set DELETE_FLAG='1'
+    where ID = #{id,jdbcType=VARCHAR}
+  </update>
+  
+  <insert id="insertOutStock"  parameterType="com.yhzn.model.storehouse.OutStock">
+	  	insert into OUT_STOCK (
+	  		 ID,
+	  		 OUT_NO,
+	  		 OUT_NAME,
+	  		 REASON,
+	  		 STATUS,
+	  		 OUT_STATUS,
+	  		 USER_ID,
+			 REMARK,
+			 <if test="reachDateStr !=null and reachDateStr != ''">
+		     REACH_DATE, 
+		     </if>
+		     <if test="finishDateStr !=null and finishDateStr != ''">
+		     FINISH_DATE, 
+		     </if>
+			 DELETE_FLAG,
+			 CREATE_DATE,
+			 CREATE_NAME,
+			 PROJ_NO,
+			 COMPANY_NAME
+	  	)values (
+		    #{id,jdbcType=VARCHAR},
+		    #{outNo,jdbcType=VARCHAR}, 
+		    #{outName,jdbcType=VARCHAR}, 
+		    #{reason,jdbcType=VARCHAR}, 
+		    #{status,jdbcType=VARCHAR}, 
+		    #{outStatus,jdbcType=VARCHAR},
+		    #{userId,jdbcType=VARCHAR}, 
+		    #{remark,jdbcType=VARCHAR}, 
+		    <if test="reachDateStr !=null and reachDateStr != ''">
+		    to_date(#{reachDateStr,jdbcType=VARCHAR},'yyyy-MM-dd'), 
+		    </if>
+		    <if test="finishDateStr !=null and finishDateStr != ''">
+		    to_date(#{finishDateStr,jdbcType=VARCHAR},'yyyy-MM-dd'), 
+		    </if>
+		    '0', 
+		    <![CDATA[sysdate]]>, 
+		    #{createName,jdbcType=VARCHAR},
+		    #{projNo},
+		    #{companyName}
+	      )
+  </insert>
+  
+  
+  <update id="editOutStock" parameterType="com.yhzn.model.storehouse.OutStock">
+    update OUT_STOCK  set    
+		   OUT_NO = #{outNo,jdbcType=VARCHAR}, 
+           OUT_NAME = #{outName,jdbcType=VARCHAR},
+		   REASON = #{reason,jdbcType=VARCHAR}, 
+		   REMARK = #{remark,jdbcType=VARCHAR}, 
+		   <if test="reachDateStr !=null and reachDateStr != ''">
+		   REACH_DATE= to_date(#{reachDateStr,jdbcType=VARCHAR},'yyyy-MM-dd'), 
+		   </if>
+		   <if test="finishDateStr !=null and finishDateStr != ''">
+		   FINISH_DATE= to_date(#{finishDateStr,jdbcType=VARCHAR},'yyyy-MM-dd'), 
+		   </if>
+		    <if test="checkUser !=null and checkUser != ''">
+		   CHECK_USER= #{checkUser,jdbcType=VARCHAR},  
+		   </if>
+		   <if test="checkUserId !=null and checkUserId != ''">
+		   CHECK_USER_ID= #{checkUserId,jdbcType=VARCHAR},
+		   </if>
+		   <if test="notPass !=null and notPass != ''">
+		   NOT_PASS =  #{notPass,jdbcType=VARCHAR}, 
+		   </if>
+		   <if test="status !=null and status != ''">
+		   STATUS = #{status,jdbcType=VARCHAR}, 
+		   </if>
+		    <if test="checkUser !=null and checkUser != ''">
+		   CHECK_DATE = <![CDATA[sysdate]]>, 
+		   </if>
+           MODIFY_NAME = #{modifyName,jdbcType=VARCHAR}, 
+           MODIFY_DATE = <![CDATA[sysdate]]>,
+           PROJ_NO=#{projNo,jdbcType=VARCHAR},
+           COMPANY_NAME=#{companyName,jdbcType=VARCHAR}
+    where ID = #{id,jdbcType=VARCHAR}
+  </update>
+  
+  
+
+  
+  <select id="queryOutStockBillList"  parameterType="java.lang.String" 
+  		resultType="com.yhzn.model.storehouse.OutBillModel">
+    select
+       <include refid="Out_Column_List"/>
+    from OUT_STOCK_BILL
+    where OUT_ID = #{id,jdbcType=VARCHAR} order by SERIAL_NUMBER asc
+  </select>
+  
+   <select id="queryOutStockBillListByOutNo"  parameterType="java.lang.String" 
+  		resultType="com.yhzn.model.storehouse.OutBillModel">
+    select
+       <include refid="Out_Column_List"/>
+    from OUT_STOCK_BILL
+    where OUT_NO = #{outNo,jdbcType=VARCHAR} order by SERIAL_NUMBER asc
+  </select>
+   <delete id="deleteOutStockBillByOutId" parameterType="java.lang.String" >
+		delete from OUT_STOCK_BILL where OUT_ID= #{id,jdbcType=VARCHAR}
+  </delete>
+  
+  <insert id="addOutStockBill" parameterType="com.yhzn.model.storehouse.OutBillModel">
+  		insert into OUT_STOCK_BILL (
+  			 ID,
+  			 OUT_ID,
+  			 OUT_NO,
+  			 TYPE,
+  			 SERIAL_NUMBER,
+  			 NAME,
+  			 STANDARD,
+  			 MODEL,
+  			 UNIT,
+  			 BRAND,
+  			 UNIT_PRICE,
+  			 COST_PRICE,
+  			 AMOUNT,
+  			 TOTAL_PRICE,
+  			 OUT_AMOUNT,
+  			 STATUS,
+  			 SUPPLIER,
+  			 PRODUCT_ID,
+	  		 REMARK,
+			 DELETE_FLAG,
+			 CREATE_DATE,
+			 CREATE_NAME
+	  	)values (
+		    #{id,jdbcType=VARCHAR},
+		    #{outId,jdbcType=VARCHAR}, 
+		    #{outNo,jdbcType=VARCHAR}, 
+		    #{type,jdbcType=VARCHAR}, 
+		    #{serialNumber,jdbcType=VARCHAR},
+		    #{name,jdbcType=VARCHAR}, 
+		    #{standard,jdbcType=VARCHAR}, 
+		    #{model,jdbcType=VARCHAR}, 
+		    #{unit,jdbcType=VARCHAR}, 
+		    #{brand,jdbcType=VARCHAR}, 
+		    #{unitPrice,jdbcType=VARCHAR}, 
+		    #{costPrice,jdbcType=VARCHAR}, 
+		    #{amount,jdbcType=VARCHAR}, 
+		    #{totalPrice,jdbcType=VARCHAR},
+		    #{outAmount,jdbcType=VARCHAR}, 
+		    #{status,jdbcType=VARCHAR}, 
+		    #{supplier,jdbcType=VARCHAR}, 
+		    #{productId,jdbcType=VARCHAR}, 
+		    #{remark,jdbcType=VARCHAR}, 
+		    '0', 
+		    <![CDATA[sysdate]]>, 
+		    #{createName,jdbcType=VARCHAR}
+	      )
+  
+  </insert>
+   
+   <update id="updateOutStockStatus" parameterType="map">
+    update OUT_STOCK  set    
+  		  <if test="status !=null and status != ''">
+		   STATUS =  #{status,jdbcType=VARCHAR}, 
+		   </if>
+		   <if test="outStatus !=null and outStatus != ''">
+		   OUT_STATUS =  #{outStatus,jdbcType=VARCHAR}, 
+		   </if>
+		   <if test="notPass !=null and notPass != ''">
+		   NOT_PASS =  #{notPass,jdbcType=VARCHAR}, 
+		   </if>
+		   <if test="finishDateStr !=null and finishDateStr != ''">
+		   FINISH_DATE= to_date(#{finishDateStr,jdbcType=VARCHAR},'yyyy-MM-dd'), 
+		   </if>
+           MODIFY_NAME = #{modifyName,jdbcType=VARCHAR}, 
+           MODIFY_DATE = sysdate
+    where ID = #{id,jdbcType=VARCHAR}
+  </update>
+
+   <update id="updateOutProductAmount" parameterType="map">
+    update PRODUCT_INFO  set    
+		   AMOUNT = #{amount,jdbcType=VARCHAR}, 
+           MODIFY_NAME = #{modifyName,jdbcType=VARCHAR}, 
+           MODIFY_DATE = sysdate
+    where ID = #{pId,jdbcType=VARCHAR}
+  </update>
+	
+	
+	<select id="queryOutBillStockInfo"  parameterType="java.lang.String" 
+			resultType="com.yhzn.model.storehouse.OutBillModel">
+    select
+         b.PRODUCT_ID,
+         b.OUT_AMOUNT,
+         b.NAME,
+         i.AMOUNT
+    from OUT_STOCK_BILL b,PRODUCT_INFO i
+    where 1 = 1 
+	    and b.PRODUCT_ID = i.ID
+	    and b.DELETE_FLAG='0'
+	    and i.DELETE_FLAG='0'
+	    and b.OUT_ID = #{id,jdbcType=VARCHAR} 
+  </select>
+  <select id="findCompanyNameByOutId" resultType="com.yhzn.model.storehouse.OutStockModel">
+  select company_name companyName,proj_no projNo from out_stock where OUT_NO=#{outNo}
+  </select>
+</mapper>

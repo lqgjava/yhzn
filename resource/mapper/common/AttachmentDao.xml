@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yhzn.dao.common.AttachmentDao">
+	<insert id="insertAtt" parameterType="com.yhzn.model.common.Attachment">
+		insert into ATTACHMENT( ID,
+								CONTENT_TYPE,
+								FILE_NAME,
+								FILE_PATH,
+								FILE_SIZE,
+								SYFFIX,
+								UPLOAD_DATE,
+								NEWNAME,
+								PARENT_ID) 
+							values 
+								(#{id},#{contentType},#{fileName},
+								#{filePath},#{fileSize},#{suffix},
+								sysdate,#{newName},#{parentId} )
+	</insert>
+	<select id="QueryOne" resultType="com.yhzn.model.common.Attachment">
+						select ID id,
+							CONTENT_TYPE contentType,
+							FILE_NAME fileName,
+							FILE_PATH filePath,
+							FILE_SIZE fileSize,
+							SYFFIX suffix ,
+							to_char(UPLOAD_DATE ,'YYYY-MM-DD HH24:Mi:SS') uploadDate,
+							NEWNAME newName ,
+							PARENT_ID parentId
+					 from 
+					 		ATTACHMENT where id=#{id}
+	</select>
+	<delete id="delete">
+	delete from ATTACHMENT where id=#{id}
+	</delete>
+	<select id="QueryFileByParentId" resultType="com.yhzn.model.common.Attachment">
+						select ID id,
+							CONTENT_TYPE contentType,
+							FILE_NAME fileName,
+							FILE_PATH filePath,
+							FILE_SIZE fileSize,
+							SYFFIX suffix ,
+							to_char(UPLOAD_DATE ,'YYYY-MM-DD HH24:Mi:SS') uploadDate,
+							NEWNAME newName ,
+							PARENT_ID parentId 
+						from 
+							ATTACHMENT
+						 where PARENT_ID=#{parentId}
+	 </select>
+	<select id="QueryOneFileByParentId" resultType="com.yhzn.model.common.Attachment">
+					select ID id,
+							CONTENT_TYPE contentType,
+							FILE_NAME fileName,
+							FILE_PATH filePath,
+							FILE_SIZE fileSize,
+							SYFFIX suffix ,
+							to_char(UPLOAD_DATE ,'YYYY-MM-DD HH24:Mi:SS') uploadDate,
+							NEWNAME newName ,
+							PARENT_ID parentId
+					 from 
+					 		ATTACHMENT where PARENT_ID=#{parentId}
+	</select>
+	<delete id="deleteByParentId">
+	delete from ATTACHMENT where PARENT_ID=#{id}
+	</delete>
+</mapper>

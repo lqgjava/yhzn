@@ -1,0 +1,310 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yhzn.dao.storehouse.EntryStockDao">
+	<sql id="Base_Column_List">
+		ID,ENTRY_NO,ENTRY_NAME,REASON,STATUS,ENTRY_STATUS,USER_ID,REMARK,NOT_PASS,CHECK_USER,CHECK_USER_ID,CHECK_DATE
+	</sql>
+	<sql id="Pur_Column_List">
+		ID,PUR_ID,PUR_NO,NAME,STANDARD,MODEL,UNIT,BRAND,UNIT_PRICE,COST_PRICE,AMOUNT,TOTAL_PRICE,ENTRY_AMOUNT,STATUS,REMARK,TYPE,SERIAL_NUMBER,SUPPLIER,PRODUCT_ID
+	</sql>
+
+	<select id="queryEntryStockList" parameterType="map" resultType="com.yhzn.model.storehouse.EntryStock">
+		select
+		<include refid="Base_Column_List" />
+		,
+		to_char(CHECK_DATE,'yyyy/mm/dd') as checkDateStr,
+		to_char(CREATE_DATE,'yyyy/mm/dd') as createDateStr
+		from ENTRY_STOCK
+		where 1 = 1
+		and DELETE_FLAG='0'
+		<if test="entryNo != null and entryNo != ''">
+			and ENTRY_NO like '%${entryNo}%'
+		</if>
+		<if test="entryName != null and entryName != ''">
+			and ENTRY_NAME like '%${entryName}%'
+		</if>
+		<if test="userId != null and userId != ''">
+			and USER_ID like '%${userId}%'
+		</if>
+	</select>
+
+	<select id="queryPurBillList" parameterType="map" resultType="com.yhzn.model.storehouse.PurBillModel">
+		select
+		<include refid="Pur_Column_List" />
+		,
+		to_char(MODIFY_DATE,'yyyy/mm/dd') as modifyDateStr
+		from PURCHASE_BILL
+		where 1 = 1
+		and DELETE_FLAG='0' and STATUS='1'
+		<if test="purNo != null and purNo != ''">
+			and PUR_NO like '%${purNo}%'
+		</if>
+		ORDER BY MODIFY_DATE DESC
+	</select>
+
+	<!-- <update id="deleteEntryStockById" parameterType="java.lang.String"> -->
+	<!-- update ENTRY_STOCK set DELETE_FLAG='1' -->
+	<!-- where ID = #{id,jdbcType=VARCHAR} -->
+	<!-- </update> -->
+
+	<update id="deleteEntryStockById" parameterType="java.lang.String">
+		update PURCHASE_BILL set DELETE_FLAG='1'
+		where ID = #{id,jdbcType=VARCHAR}
+	</update>
+
+	<insert id="insertEntryStock" parameterType="com.yhzn.model.storehouse.EntryStock">
+		insert into ENTRY_STOCK (
+		ID,
+		ENTRY_NO,
+		ENTRY_NAME,
+		REASON,
+		STATUS,
+		ENTRY_STATUS,
+		USER_ID,
+		REMARK,
+		<if test="reachDateStr !=null and reachDateStr != ''">
+			REACH_DATE,
+		</if>
+		<if test="finishDateStr !=null and finishDateStr != ''">
+			FINISH_DATE,
+		</if>
+		DELETE_FLAG,
+		CREATE_DATE,
+		CREATE_NAME
+		)values (
+		#{id,jdbcType=VARCHAR},
+		#{entryNo,jdbcType=VARCHAR},
+		#{entryName,jdbcType=VARCHAR},
+		#{reason,jdbcType=VARCHAR},
+		#{status,jdbcType=VARCHAR},
+		#{entryStatus,jdbcType=VARCHAR},
+		#{userId,jdbcType=VARCHAR},
+		#{remark,jdbcType=VARCHAR},
+		<if test="reachDateStr !=null and reachDateStr != ''">
+			to_date(#{reachDateStr,jdbcType=VARCHAR},'yyyy-MM-dd'),
+		</if>
+		<if test="finishDateStr !=null and finishDateStr != ''">
+			to_date(#{finishDateStr,jdbcType=VARCHAR},'yyyy-MM-dd'),
+		</if>
+		'0',
+		sysdate,
+		#{createName,jdbcType=VARCHAR}
+		)
+	</insert>
+
+
+	<update id="editEntryStock" parameterType="com.yhzn.model.storehouse.EntryStock">
+		update ENTRY_STOCK set
+		ENTRY_NO = #{entryNo,jdbcType=VARCHAR},
+		ENTRY_NAME = #{entryName,jdbcType=VARCHAR},
+		REASON = #{reason,jdbcType=VARCHAR},
+		REMARK = #{remark,jdbcType=VARCHAR},
+		<if test="reachDateStr !=null and reachDateStr != ''">
+			REACH_DATE= to_date(#{reachDateStr,jdbcType=VARCHAR},'yyyy-MM-dd'),
+		</if>
+		<if test="finishDateStr !=null and finishDateStr != ''">
+			FINISH_DATE= to_date(#{finishDateStr,jdbcType=VARCHAR},'yyyy-MM-dd'),
+		</if>
+		<if test="status !=null and status != ''">
+			STATUS = #{status,jdbcType=VARCHAR},
+		</if>
+		<if test="entryStatus !=null and entryStatus != ''">
+			ENTRY_STATUS = #{entryStatus,jdbcType=VARCHAR},
+		</if>
+		<if test="notPass !=null and notPass != ''">
+			NOT_PASS = #{notPass,jdbcType=VARCHAR},
+		</if>
+		<if test="checkUser !=null and checkUser != ''">
+			CHECK_USER= #{checkUser,jdbcType=VARCHAR},
+		</if>
+		<if test="checkUserId !=null and checkUserId != ''">
+			CHECK_USER_ID= #{checkUserId,jdbcType=VARCHAR},
+		</if>
+		<if test="checkUser !=null and checkUser != ''">
+			CHECK_DATE = <![CDATA[sysdate]]>,
+		</if>
+		MODIFY_NAME = #{modifyName,jdbcType=VARCHAR},
+		MODIFY_DATE = <![CDATA[sysdate]]>
+		where ID = #{id,jdbcType=VARCHAR}
+	</update>
+
+
+
+	<select id="queryETPurBillList" parameterType="java.lang.String" resultType="com.yhzn.model.storehouse.PurBillModel">
+		select
+		<include refid="Pur_Column_List" />
+		from PURCHASE_BILL
+		where PUR_ID = #{id,jdbcType=VARCHAR} order by SERIAL_NUMBER asc
+	</select>
+
+
+	<delete id="deleteETPurBillByPurId" parameterType="java.lang.String">
+		delete from PURCHASE_BILL where PUR_ID= #{id,jdbcType=VARCHAR}
+	</delete>
+
+	<insert id="addETPurBill" parameterType="com.yhzn.model.storehouse.PurBillModel">
+		insert into PURCHASE_BILL (
+		ID,
+		PUR_ID,
+		PUR_NO,
+		NAME,
+		STANDARD,
+		MODEL,
+		UNIT,
+		BRAND,
+		UNIT_PRICE,
+		COST_PRICE,
+		AMOUNT,
+		TOTAL_PRICE,
+		ENTRY_AMOUNT,
+		STATUS,
+		TYPE,
+		SERIAL_NUMBER,
+		REMARK,
+		DELETE_FLAG,
+		CREATE_DATE,
+		CREATE_NAME
+		)values (
+		#{id,jdbcType=VARCHAR},
+		#{purId,jdbcType=VARCHAR},
+		#{purNo,jdbcType=VARCHAR},
+		#{name,jdbcType=VARCHAR},
+		#{standard,jdbcType=VARCHAR},
+		#{model,jdbcType=VARCHAR},
+		#{unit,jdbcType=VARCHAR},
+		#{brand,jdbcType=VARCHAR},
+		#{unitPrice,jdbcType=VARCHAR},
+		#{costPrice,jdbcType=VARCHAR},
+		#{amount,jdbcType=VARCHAR},
+		#{totalPrice,jdbcType=VARCHAR},
+		#{entryAmount,jdbcType=VARCHAR},
+		#{status,jdbcType=VARCHAR},
+		#{type,jdbcType=VARCHAR},
+		#{serialNumber,jdbcType=VARCHAR},
+		#{remark,jdbcType=VARCHAR},
+		'0',
+		sysdate,
+		#{createName,jdbcType=VARCHAR}
+		)
+
+	</insert>
+
+
+
+	<update id="updateEntryStockStatus" parameterType="map">
+		update ENTRY_STOCK set
+		<if test="status !=null and status != ''">
+			STATUS = #{status,jdbcType=VARCHAR},
+		</if>
+		<if test="entryStatus !=null and entryStatus != ''">
+			ENTRY_STATUS = #{entryStatus,jdbcType=VARCHAR},
+		</if>
+		<if test="notPass !=null and notPass != ''">
+			NOT_PASS = #{notPass,jdbcType=VARCHAR},
+		</if>
+		<if test="finishDateStr !=null and finishDateStr != ''">
+			FINISH_DATE= to_date(#{finishDateStr,jdbcType=VARCHAR},'yyyy-MM-dd'),
+		</if>
+		MODIFY_NAME = #{modifyName,jdbcType=VARCHAR},
+		MODIFY_DATE = sysdate
+		where ID = #{id,jdbcType=VARCHAR}
+	</update>
+
+	<update id="updatePurBillStatus" parameterType="map">
+		update PURCHASE_BILL set
+		STATUS = 1,
+		MODIFY_NAME = #{modifyName,jdbcType=VARCHAR},
+		MODIFY_DATE = sysdate
+		where ID = #{id,jdbcType=VARCHAR}
+	</update>
+
+	<update id="updateProductAmount" parameterType="map">
+		update PRODUCT_INFO set
+		AMOUNT = #{amount,jdbcType=VARCHAR},
+		MODIFY_NAME = #{modifyName,jdbcType=VARCHAR},
+		MODIFY_DATE = sysdate
+		where ID = #{pId,jdbcType=VARCHAR}
+	</update>
+
+	<select id="queryPurBillMapById" parameterType="java.lang.String" resultType="map">
+		select
+		b.PUR_ID as purId,
+		b.amount as amount,
+		i.amount as stockAmount,
+		b.ENTRY_AMOUNT as entryAmount,
+		i.id as pId
+		from PURCHASE_BILL b ,PRODUCT_INFO i
+		where 1 = 1
+		and b.PRODUCT_ID = i.ID
+		and b.DELETE_FLAG='0'
+		and i.DELETE_FLAG='0'
+		and b.id = #{id,jdbcType=VARCHAR}
+		and rownum = 1
+	</select>
+
+	<select id="queryPurBillStatusCount" parameterType="java.lang.String" resultType="java.lang.Integer">
+		select count(1)
+		from PURCHASE_BILL
+		where 1 = 1
+		and DELETE_FLAG='0'
+		and STATUS = '0'
+		and PUR_ID = #{purId,jdbcType=VARCHAR}
+	</select>
+
+	<update id="updatePurchaseEntryStatus" parameterType="map">
+		update PURCHASE set
+		ENTRY_STATUS = '1',
+		MODIFY_NAME = #{modifyName,jdbcType=VARCHAR},
+		MODIFY_DATE = sysdate
+		where ID = #{purId,jdbcType=VARCHAR}
+	</update>
+	<update id="updatePurBillAllStatus">
+		update PURCHASE_BILL set
+		STATUS = #{status,jdbcType=VARCHAR},
+		MODIFY_NAME = #{modifyName,jdbcType=VARCHAR},
+		MODIFY_DATE = sysdate
+		where ID in
+		<foreach collection="ids" item="item" open="(" close=")" separator=",">
+			#{item,jdbcType=VARCHAR}
+		</foreach>
+	</update>
+	<select id="queryPurBillMapByIds"  resultType="com.yhzn.model.storehouse.ProductModel">
+		select
+		b.PUR_ID as id,
+		b.ENTRY_AMOUNT as entryAmount,
+		b.amount as amount,
+		i.amount as stockAmount,
+		i.id as pId
+		from PURCHASE_BILL b ,PRODUCT_INFO i
+		where 1 = 1
+		and b.PRODUCT_ID = i.ID
+		and b.DELETE_FLAG='0'
+		and i.DELETE_FLAG='0'
+<!-- 		and rownum = 1 -->
+		and b.id in
+		<foreach collection="ids" item="item" open="(" close=")" separator=",">
+			#{item,jdbcType=VARCHAR}		
+		</foreach>
+	</select>
+	<update id="updateProductAmountById" parameterType="com.yhzn.model.storehouse.ProductModel">
+	update PRODUCT_INFO set
+		AMOUNT = #{stockAmount,jdbcType=VARCHAR},
+		MODIFY_NAME = #{modifyName,jdbcType=VARCHAR},
+		MODIFY_DATE = sysdate
+		where ID = #{pId,jdbcType=VARCHAR}
+	</update>
+	<update id="updatePurchaseEntryAllStatus">
+		update PURCHASE set
+		ENTRY_STATUS = '1',
+		MODIFY_NAME = #{modifyName,jdbcType=VARCHAR},
+		MODIFY_DATE = sysdate
+		where ID = #{id,jdbcType=VARCHAR}
+	</update>
+	<update id="updatePurEntryAmountById" parameterType="map">
+	update PURCHASE_BILL set
+		ENTRY_AMOUNT=#{entryAmount,jdbcType=VARCHAR},
+		MODIFY_NAME = #{modifyName,jdbcType=VARCHAR},
+		MODIFY_DATE = sysdate
+		where ID = #{id,jdbcType=VARCHAR}
+	</update>
+</mapper>

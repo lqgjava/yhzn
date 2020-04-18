@@ -1,0 +1,9 @@
+/application.properties
+/com/
+/ehcache.xml
+/jdbc.properties
+/license.xml
+/log4j.properties
+/mapper/
+/mybatis/
+/spring/

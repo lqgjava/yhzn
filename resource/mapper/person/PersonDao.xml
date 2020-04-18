@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yhzn.dao.person.PersonDao">
+
+  <sql id="Base_Column_List">
+    ID,PERSON_NO, DEPT,PHOTO_ID, NAME,SEX,ID_CARD,VOLK,NATIVE_PLACE,BIRTH_DATE,PHONE_NO,ENTRY_DATE,
+	PAYMENT,OTHER_PAY,IF_JOB,REMARK,DELETE_FLAG,CREATE_DATE,CREATE_NAME, MODIFY_DATE,MODIFY_NAME
+  </sql>
+  
+  <select id="queryPersonList" parameterType="map" resultType="com.yhzn.model.person.Person">
+    select
+       <include refid="Base_Column_List"/>,
+       PAYMENT as paymentStr,
+       OTHER_PAY as otherPayStr,
+       to_char(BIRTH_DATE,'yyyy/mm/dd') as entryDateStr,
+       to_char(ENTRY_DATE,'yyyy/mm/dd') as birthDateStr
+    from PERSON_INFO
+    where 1 = 1 
+    and DELETE_FLAG='0'
+     <if test="name != null and name != ''">
+        and NAME like '%${name}%'
+      </if>
+      <if test="dept != null and dept != ''">
+        and DEPT like '%${dept}%'
+      </if>
+      <if test="idCard != null and idCard != ''">
+        and ID_CARD like '%${idCard}%'
+      </if>
+      <if test="ifJob != null and ifJob != ''">
+        and IF_JOB like '%${ifJob}%'
+      </if>
+     <if test="beginDate != null and beginDate != ''">
+         and ENTRY_DATE<![CDATA[>=]]>to_date(#{beginDate},'yyyy-mm-dd hh24:mi:ss')
+      </if>
+      <if test="endDate != null and endDate != ''">
+         and ENTRY_DATE <![CDATA[<]]>to_date(#{endDate},'yyyy-mm-dd hh24:mi:ss')
+      </if>
+  </select>
+  
+   <update id="deletePersonById" parameterType="java.lang.String">
+    update  PERSON_INFO set DELETE_FLAG='1'
+    where ID = #{id,jdbcType=VARCHAR}
+  </update>
+  
+  
+  <insert id="insertPersonInfo"  parameterType="com.yhzn.model.person.Person">
+	  	insert into PERSON_INFO (
+	  		 ID,
+	  		 PERSON_NO, 
+	  		 DEPT,
+	  		 PHOTO_ID, 
+	  		 NAME,
+	  		 SEX,
+	  		 ID_CARD,
+	  		 VOLK,
+	  		 NATIVE_PLACE,
+	  		  <if test="birthDateStr !=null and birthDateStr != ''">
+	  		 BIRTH_DATE,
+	  		 </if>
+	  		 PHONE_NO,
+	  		 <if test="entryDateStr !=null and entryDateStr != ''">
+	  		 ENTRY_DATE,
+	  		 </if>
+			 PAYMENT,
+			 OTHER_PAY,
+			 IF_JOB,
+			 REMARK,
+			 DELETE_FLAG,
+			 CREATE_DATE,
+			 CREATE_NAME
+	  	)values (
+		    #{id,jdbcType=VARCHAR},
+		    #{personNo,jdbcType=VARCHAR}, 
+		    #{dept,jdbcType=VARCHAR}, 
+		    #{photoId,jdbcType=VARCHAR}, 
+		    #{name,jdbcType=VARCHAR}, 
+		    #{sex,jdbcType=VARCHAR}, 
+		    #{idCard,jdbcType=VARCHAR}, 
+		    #{volk,jdbcType=VARCHAR},
+		    #{nativePlace,jdbcType=VARCHAR},
+		    <if test="birthDateStr !=null and birthDateStr != ''">
+		    to_date(#{birthDateStr,jdbcType=VARCHAR},'yyyy-MM-dd'), 
+		    </if>
+		    #{phoneNo,jdbcType=VARCHAR},
+		    <if test="entryDateStr !=null and entryDateStr != ''">
+		    to_date(#{entryDateStr,jdbcType=VARCHAR},'yyyy-MM-dd'), 
+		    </if>
+		    #{payment,jdbcType=NUMERIC}, 
+		    #{otherPay,jdbcType=NUMERIC}, 
+		    #{ifJob,jdbcType=VARCHAR}, 
+		    #{remark,jdbcType=VARCHAR}, 
+		    '0', 
+		    sysdate, 
+		    #{createName,jdbcType=VARCHAR}
+	      )
+  </insert>
+  
+  <update id="editPersonInfo" parameterType="com.yhzn.model.person.Person">
+    update PERSON_INFO  set    
+           PERSON_NO= #{personNo,jdbcType=VARCHAR},
+           <if test="photoId !=null and photoId != ''">
+           PHOTO_ID= #{photoId,jdbcType=VARCHAR}, 
+           </if> 
+		   DEPT= #{dept,jdbcType=VARCHAR}, 
+		   NAME= #{name,jdbcType=VARCHAR}, 
+		   SEX= #{sex,jdbcType=VARCHAR}, 
+		   ID_CARD= #{idCard,jdbcType=VARCHAR}, 
+		   VOLK= #{volk,jdbcType=VARCHAR},
+		   NATIVE_PLACE= #{nativePlace,jdbcType=VARCHAR},
+		   <if test="birthDateStr !=null and birthDateStr != ''">
+		   BIRTH_DATE= to_date(#{birthDateStr,jdbcType=VARCHAR},'yyyy-MM-dd'), 
+		   </if>
+		   PHONE_NO= #{phoneNo,jdbcType=VARCHAR},
+		   <if test="entryDateStr !=null and entryDateStr != ''">
+		   ENTRY_DATE = to_date(#{entryDateStr,jdbcType=VARCHAR},'yyyy-MM-dd'), 
+		   </if>
+		   PAYMENT= #{payment,jdbcType=NUMERIC}, 
+		   OTHER_PAY= #{otherPay,jdbcType=NUMERIC}, 
+		   IF_JOB= #{ifJob,jdbcType=VARCHAR}, 
+		   REMARK= #{remark,jdbcType=VARCHAR}, 
+           MODIFY_NAME = #{modifyName,jdbcType=VARCHAR}, 
+           MODIFY_DATE = sysdate
+    where ID = #{id,jdbcType=VARCHAR}
+  </update>
+  
+   <select id="queryPersonListByMap" parameterType="map" resultType="com.yhzn.model.person.Person">
+    select
+       <include refid="Base_Column_List"/>,
+       PAYMENT as paymentStr,
+       OTHER_PAY as otherPayStr
+    from PERSON_INFO
+    where 1 = 1 
+    and DELETE_FLAG='0'
+     <if test="name != null and name != ''">
+        and NAME like '%${name}%'
+      </if>
+      <if test="dept != null and dept != ''">
+        and DEPT like '%${dept}%'
+      </if>
+      <if test="idCard != null and idCard != ''">
+        and ID_CARD like '%${idCard}%'
+      </if>
+      <if test="ifJob != null and ifJob != ''">
+        and IF_JOB like '%${ifJob}%'
+      </if>
+     <if test="beginDate != null and beginDate != ''">
+         and ENTRY_DATE<![CDATA[>=]]>to_date(#{beginDate},'yyyy-mm-dd hh24:mi:ss')
+      </if>
+      <if test="endDate != null and endDate != ''">
+         and ENTRY_DATE <![CDATA[<]]>to_date(#{endDate},'yyyy-mm-dd hh24:mi:ss')
+      </if>
+  </select>
+  
+  <select id="queryPersonInfoById" parameterType="java.lang.String" 
+  		  resultType="com.yhzn.model.person.Person">
+    select 
+    	 <include refid="Base_Column_List"/>
+	    from PERSON_INFO
+	    where 1 = 1  and DELETE_FLAG='0'   and ID = #{id}
+  </select>
+  
+</mapper>

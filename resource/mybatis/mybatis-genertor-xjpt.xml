@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE generatorConfiguration
+        PUBLIC "-//mybatis.org//DTD MyBatis Generator Configuration 1.0//EN"
+        "http://mybatis.org/dtd/mybatis-generator-config_1_0.dtd">
+
+<generatorConfiguration>
+
+    <context id="oracle" targetRuntime="MyBatis3">
+
+        <!-- 配置是否要生产注释 -->
+        <commentGenerator>
+            <property name="suppressAllComments" value="true"/>
+        </commentGenerator>
+
+        <!-- 配置数据库链接 -->
+        <jdbcConnection driverClass="oracle.jdbc.driver.OracleDriver"
+                        connectionURL="jdbc:oracle:thin:@(DESCRIPTION=(ADDRESS_LIST=(ADDRESS=(PROTOCOL=TCP)(HOST=10.154.132.75)(PORT=1521)))(CONNECT_DATA=(SERVICE_NAME=xcky)))"
+                        userId="xjpt_zjk"
+                        password="xjpt_zjk">
+        </jdbcConnection>
+
+        <!-- 用于定义Java模型生成的属性-->
+        <javaTypeResolver >
+            <property name="forceBigDecimals" value="false" />
+        </javaTypeResolver>
+        
+        <!-- 指定JavaBean生成的位置 -->
+        <javaModelGenerator targetPackage="com.yhzn.model.source" targetProject=".\src">
+            <property name="enableSubPackages" value="true" />
+            <property name="trimStrings" value="true" />
+        </javaModelGenerator>
+
+        <!-- 指定SLQ映射文件生产的位置 -->
+        <sqlMapGenerator targetPackage="mapper.source"  targetProject=".\resource">
+            <property name="enableSubPackages" value="true" />
+        </sqlMapGenerator>
+
+        <!-- 指定dao接口生成的位置，mapper接口 -->
+        <javaClientGenerator type="XMLMAPPER" targetPackage="com.yhzn.dao.source"  targetProject=".\src">
+            <property name="enableSubPackages" value="true" />
+        </javaClientGenerator>
+
+        <!-- table指定每个表的生产策略 -->
+        <table tableName="FINGERPRINT_ZW" domainObjectName="FINGERPRINT_ZW" />
+
+    </context>
+
+</generatorConfiguration>

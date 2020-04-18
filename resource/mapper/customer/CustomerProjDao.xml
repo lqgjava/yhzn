@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yhzn.dao.customer.CustomerProjDao">
+
+ <sql id="Base_Column_List">
+    ID,CUSTOMER_ID,PROJECT_NO,PROJECT_NAME,PURCHASE_UNIT,PURCHASE_ADD,REMARK,DELETE_FLAG,CREATE_DATE,CREATE_NAME, MODIFY_DATE,MODIFY_NAME,STATUS
+  </sql>
+  
+   <sql id="Bill_Column_List">
+    ID,PROJ_ID,PROJ_NO,NAME,STANDARD,MODEL,UNIT,BRAND,UNIT_PRICE,COST_PRICE,AMOUNT,DISCOUNT,TOTAL_PRICE,REMARK
+  </sql>
+  
+  <select id="queryCustomerProjList" parameterType="map" resultType="com.yhzn.model.customer.CustomerProj">
+    select
+       <include refid="Base_Column_List"/>,
+       to_char(CREATE_DATE,'yyyy/mm/dd') as createDateStr
+    from CUSTOMER_PROJ
+    where 1 = 1 
+    and DELETE_FLAG='0'
+     <if test="projectName != null and projectName != ''">
+        and PROJECT_NAME like '%${projectName}%'
+      </if>
+      <if test="projectNo != null and projectNo != ''">
+        and PROJECT_NO like '%${projectNo}%'
+      </if>
+      <if test="purchaseUnit != null and purchaseUnit != ''">
+        and PURCHASE_UNIT like '%${purchaseUnit}%'
+      </if>
+      <if test="customerId != null and customerId != ''">
+        and CUSTOMER_ID like '%${customerId}%'
+      </if>
+  </select>
+  
+  <update id="deleteCustomerProjById" parameterType="java.lang.String">
+    update  CUSTOMER_PROJ set DELETE_FLAG='1'
+    where ID = #{id,jdbcType=VARCHAR}
+  </update>
+  
+  <insert id="insertCustomerProj"  parameterType="com.yhzn.model.customer.CustomerProj">
+	  	insert into CUSTOMER_PROJ (
+	  		 ID,
+	  		 CUSTOMER_ID, 
+	  		 PROJECT_NO,
+	  		 PROJECT_NAME, 
+	  		 PURCHASE_UNIT,
+	  		 PURCHASE_ADD,
+			 REMARK,
+			 DELETE_FLAG,
+			 CREATE_DATE,
+			 CREATE_NAME
+	  	)values (
+		    #{id,jdbcType=VARCHAR},
+		    #{customerId,jdbcType=VARCHAR}, 
+		    #{projectNo,jdbcType=VARCHAR}, 
+		    #{projectName,jdbcType=VARCHAR}, 
+		    #{purchaseUnit,jdbcType=VARCHAR}, 
+		    #{purchaseAdd,jdbcType=VARCHAR}, 
+		    #{remark,jdbcType=VARCHAR}, 
+		    '0', 
+		    sysdate, 
+		    #{createName,jdbcType=VARCHAR}
+	      )
+  </insert>
+  
+  <update id="updateCustomerProjStatus" parameterType="map">
+    update CUSTOMER_PROJ  set    
+		   STATUS = #{status,jdbcType=VARCHAR}, 
+           MODIFY_NAME = #{modifyName,jdbcType=VARCHAR}, 
+           MODIFY_DATE = sysdate
+    where ID = #{id,jdbcType=VARCHAR}
+  </update>
+  
+  <update id="editCustomerProj" parameterType="com.yhzn.model.customer.CustomerProj">
+    update CUSTOMER_PROJ  set    
+		   PROJECT_NO = #{projectNo,jdbcType=VARCHAR}, 
+           PROJECT_NAME = #{projectName,jdbcType=VARCHAR},
+		   PURCHASE_UNIT = #{purchaseUnit,jdbcType=VARCHAR}, 
+		   PURCHASE_ADD = #{purchaseAdd,jdbcType=VARCHAR}, 
+		   REMARK = #{remark,jdbcType=VARCHAR}, 
+           MODIFY_NAME = #{modifyName,jdbcType=VARCHAR}, 
+           MODIFY_DATE = sysdate
+    where ID = #{id,jdbcType=VARCHAR}
+  </update>
+  
+   <select id="queryCustomerProjById" parameterType="java.lang.String" 
+  		  resultType="com.yhzn.model.customer.CustomerProj">
+    select 
+    	 <include refid="Base_Column_List"/>
+	    from CUSTOMER_PROJ
+	    where 1 = 1  and DELETE_FLAG='0'   and ID = #{id,jdbcType=VARCHAR}
+  </select>
+  
+  <delete id="deletePriceBillByProjId" parameterType="java.lang.String" >
+		delete from price_bill where proj_id= #{id,jdbcType=VARCHAR}
+  </delete>
+  
+  <insert id="addPriceBill" parameterType="com.yhzn.model.customer.PriceBill">
+  		insert into PRICE_BILL (
+	  		 ID,
+	  		 PROJ_ID,
+	  		 PROJ_NO,
+	  		 NAME,
+	  		 STANDARD,
+	  		 MODEL,
+	  		 UNIT,
+	  		 BRAND,
+	  		 UNIT_PRICE,
+	  		 COST_PRICE,
+	  		 AMOUNT,
+	  		 DISCOUNT,
+	  		 TOTAL_PRICE,
+	  		 REMARK,
+			 DELETE_FLAG,
+			 CREATE_DATE,
+			 CREATE_NAME
+	  	)values (
+		    #{id,jdbcType=VARCHAR},
+		    #{projId,jdbcType=VARCHAR}, 
+		    #{projNo,jdbcType=VARCHAR}, 
+		    #{name,jdbcType=VARCHAR}, 
+		    #{standard,jdbcType=VARCHAR}, 
+		    #{model,jdbcType=VARCHAR}, 
+		    #{unit,jdbcType=VARCHAR}, 
+		    #{brand,jdbcType=VARCHAR}, 
+		    #{unitPrice,jdbcType=VARCHAR}, 
+		    #{costPrice,jdbcType=VARCHAR}, 
+		    #{amount,jdbcType=VARCHAR}, 
+		    #{discount,jdbcType=VARCHAR},
+		    #{totalPrice,jdbcType=VARCHAR},
+		    #{remark,jdbcType=VARCHAR}, 
+		    '0', 
+		    sysdate, 
+		    #{createName,jdbcType=VARCHAR}
+	      )
+  
+  </insert>
+  
+  <select id="queryPriceBillList"  parameterType="java.lang.String" 
+  		  resultType="com.yhzn.model.customer.PriceBill">
+  		select 
+  			<include refid="Bill_Column_List"/>
+  		from PRICE_BILL where proj_id = #{id,jdbcType=VARCHAR}
+  </select>
+  
+</mapper>

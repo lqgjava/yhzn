@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yhzn.dao.storehouse.StockCheckDao">
+
+ <sql id="Base_Column_List">
+		ID,TYPE, NAME,SERIAL_NUMBER,CATEGORY,STANDARD,MODEL,UNIT,
+		BRAND,SUPPLIER,UNIT_PRICE,COST_PRICE,AMOUNT,REMARK,STOCK_AMOUNT
+	</sql>
+	
+	<select id="queryStockCheckList" parameterType="map" resultType="com.yhzn.model.storehouse.StockCheck">
+    select
+       <include refid="Base_Column_List"/>
+    from PRODUCT_INFO
+    where 1 = 1 
+    and DELETE_FLAG='0'
+     <if test="type != null and type != ''">
+        and TYPE like '%${type}%'
+      </if>
+      <if test="name != null and name != ''">
+        and NAME like '%${name}%'
+      </if>
+      <if test="standard != null and standard != ''">
+        and STANDARD like '%${standard}%'
+      </if>
+      <if test="model != null and model != ''">
+        and MODEL like '%${model}%'
+      </if>
+     <if test="brand != null and brand != ''">
+         and BRAND like '%${brand}%'
+      </if>
+      <if test="supplier != null and supplier != ''">
+         and SUPPLIER like '%${supplier}%'
+      </if>
+      ORDER BY SERIAL_NUMBER ASC 
+  </select>
+  
+  <update id="editStockCheckInfo" parameterType="com.yhzn.model.storehouse.StockCheck">
+    update PRODUCT_INFO  set    
+		   AMOUNT= #{amount,jdbcType=VARCHAR}, 
+		   STOCK_AMOUNT= #{stockAmount,jdbcType=VARCHAR}, 
+           MODIFY_NAME = #{modifyName,jdbcType=VARCHAR}, 
+           MODIFY_DATE = sysdate
+    where ID = #{id,jdbcType=VARCHAR}
+  </update>
+  
+  <select id="queryOutRecordList" parameterType="java.lang.String" 
+  		  resultType="com.yhzn.model.storehouse.OutBillModel">
+  	select 
+  		b.ID,
+  		b.NAME,
+  		b.OUT_NO,
+  		b.STANDARD,
+  		b.MODEL,
+  		b.UNIT,
+  		b.BRAND,
+  		b.SUPPLIER,
+  		b.OUT_AMOUNT,
+  		s.MODIFY_NAME,
+  	    to_char(s.MODIFY_DATE,'yyyy/mm/dd') as modifyDateStr
+  	from out_stock s,out_stock_bill b
+  	where 1=1 
+  	    and s.id = b.out_id
+  		and s.delete_flag = '0'
+  		and b.delete_flag = '0'
+  		and s.out_status = '2'
+  		and b.product_id = #{id}
+    	order by s.create_date desc
+  </select>
+  
+  <select id="queryEntryRecordList" parameterType="java.lang.String" 
+  		  resultType="com.yhzn.model.storehouse.PurBillModel">
+  		  select 
+  		    ID,
+  		    NAME,
+  			PUR_NO,
+  			STANDARD,
+  			MODEL,
+  			UNIT,
+  			BRAND,
+  			AMOUNT,
+  			MODIFY_NAME,
+  			SUPPLIER,
+  			to_char(MODIFY_DATE,'yyyy/mm/dd') as modifyDateStr
+  	from PURCHASE_BILL
+  		where 1=1 
+  		and DELETE_FLAG ='0'
+  		and STATUS = '1'
+  		and PRODUCT_ID = #{id}
+  		ORDER BY CREATE_DATE DESC
+  </select>
+</mapper>

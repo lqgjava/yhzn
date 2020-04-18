@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yhzn.dao.supplier.SupplierDao">
+	<!-- 查询和模糊查询供应商 -->
+	<select id="findAll" resultType="com.yhzn.model.supplier.SupplierModel">
+		select ID id, NAME name, PRODUCT product,USER_NAME userName, USER_TEL
+		userTel,
+		DUTY_PARAGRAPH dutyPargraph, BANK_ACCOUNT bankAccount,
+		OPEN_BANK openBank,
+		SUPPLIER_ADDRESS supplierAddress, AREA area, REMARK
+		remark,
+		TO_CHAR(INSERT_DATE,'yyyy-MM-dd') insertDate,
+		TO_CHAR(UPDATE_DATE,'yyyy-MM-dd') updateDate from supplier
+		<where>
+			<if test="name!=null and name!='' ">
+				and NAME like #{name}
+			</if>
+			<if test="userName!=null and userName!='' ">
+				and USER_NAME like #{userName}
+			</if>
+			<if test="area!=null and area!=''">
+				and area like #{area}
+			</if>
+		</where>
+	</select>
+	<!-- 新增供应商 -->
+	<insert id="add"	parameterType="com.yhzn.model.supplier.SupplierModel">
+		INSERT INTO
+		SUPPLIER
+		("ID", "NAME", "PRODUCT",
+		"USER_NAME", "USER_TEL", "DUTY_PARAGRAPH",
+		"BANK_ACCOUNT",
+		"OPEN_BANK",
+		"SUPPLIER_ADDRESS", "AREA", "REMARK", "INSERT_DATE")
+		VALUES
+		(#{id},
+		#{name}, #{product}, #{userName}, #{userTel}, #{dutyPargraph},
+		#{bankAccount}, #{openBank}, #{supplierAddress}, #{area}, #{remark},
+		TO_DATE(#{insertDate}, 'YYYY-MM-DD HH24:MI:SS'))
+	</insert>
+	<!-- 根据id查询供应商 -->
+	<select id="findById" resultType="com.yhzn.model.supplier.SupplierModel">
+		select ID id, NAME name, PRODUCT product,USER_NAME
+		userName, USER_TEL
+		userTel,
+		DUTY_PARAGRAPH dutyPargraph, BANK_ACCOUNT
+		bankAccount, OPEN_BANK openBank,
+		SUPPLIER_ADDRESS supplierAddress, AREA
+		area, REMARK remark,
+		TO_CHAR(INSERT_DATE,'yyyy-MM-dd') insertDate,
+		TO_CHAR(UPDATE_DATE,'yyyy-MM-dd') updateDate from supplier where
+		id=#{id}
+	</select>
+	<!-- 修改供应商信息 -->
+	<update id="update" parameterType="com.yhzn.model.supplier.SupplierModel">
+		update
+		supplier
+		set
+		NAME=#{name},
+		PRODUCT=#{product},
+		USER_NAME=#{userName},
+		USER_TEL=#{userTel},
+		DUTY_PARAGRAPH=#{dutyPargraph},
+		BANK_ACCOUNT=#{bankAccount},
+		OPEN_BANK=#{openBank},
+		SUPPLIER_ADDRESS=#{supplierAddress},
+		AREA=#{area},
+		REMARK=#{remark},
+		UPDATE_DATE=TO_DATE(#{updateDate}, 'YYYY-MM-DD HH24:MI:SS') where id=#{id}
+	</update>
+	<delete id="delete">
+	delete  from supplier where id in 	  
+	  <foreach collection="ids" index="index" item="item" open="(" separator="," close=")">
+                #{item}       
+        </foreach>    
+	</delete>
+	<select id="supplierCombobox" resultType="com.yhzn.model.security.SysDict">
+	select ID,name text from supplier
+	</select>
+</mapper>

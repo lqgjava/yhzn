@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <!-- spring的配置文件 管理引用的各类插件和框架 -->
+    
+    <!-- 引用shiro框架 -->
+    <import resource="spring-shiro.xml"/>
+
+    <!-- 引用mybatis框架 -->
+    <import resource="spring-mybatis-xjpt.xml"/>
+	
+	<!-- 引入定时任务  -->
+	<!-- <import resource="spring-quartz-demo.xml"></import> -->
+	<!--<import resource="spring-quartz-zlcb.xml"></import>-->
+</beans>

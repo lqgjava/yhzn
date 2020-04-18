@@ -1,0 +1,1 @@
+.datagrid-header-row > td:nth-child(1) { height:35px;}

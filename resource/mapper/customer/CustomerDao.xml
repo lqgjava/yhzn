@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yhzn.dao.customer.CustomerDao">
+
+	<sql id="Base_Column_List">
+		ID,NAME,PHONE_NO,UNIT_NAME,AREA,TYPE,REMARK,DELETE_FLAG,CREATE_DATE,CREATE_NAME,
+		MODIFY_DATE,MODIFY_NAME,UNIT_ADDR,IRD_NUM,ACCOUNT_NUM,OPEN_BANK
+	</sql>
+
+	<select id="queryCustomerList" parameterType="map"
+		resultType="com.yhzn.model.customer.Customer">
+		select
+		<include refid="Base_Column_List" />
+		from CUSTOMER_INFO
+		where 1 = 1
+		and DELETE_FLAG='0'
+		<if test="name != null and name != ''">
+			and NAME like '%${name}%'
+		</if>
+		<if test="type != null and type != ''">
+			and TYPE like '%${type}%'
+		</if>
+		<if test="unitName != null and unitName != ''">
+			and UNIT_NAME like '%${unitName}%'
+		</if>
+	</select>
+
+	<update id="deleteCustomerById" parameterType="java.lang.String">
+		update CUSTOMER_INFO set DELETE_FLAG='1'
+		where ID = #{id,jdbcType=VARCHAR}
+	</update>
+
+	<insert id="insertCustomerInfo" parameterType="com.yhzn.model.customer.Customer">
+		insert into CUSTOMER_INFO (
+		ID,
+		NAME,
+		UNIT_NAME,
+		PHONE_NO,
+		AREA,
+		TYPE,
+		REMARK,
+		UNIT_ADDR,
+		IRD_NUM,
+		ACCOUNT_NUM,
+		OPEN_BANK,
+		DELETE_FLAG,
+		CREATE_DATE,
+		CREATE_NAME
+		)values (
+		#{id,jdbcType=VARCHAR},
+		#{name,jdbcType=VARCHAR},
+		#{unitName,jdbcType=VARCHAR},
+		#{phoneNo,jdbcType=VARCHAR},
+		#{area,jdbcType=VARCHAR},
+		#{type,jdbcType=VARCHAR},
+		#{remark,jdbcType=VARCHAR},
+		#{unitAddr,jdbcType=VARCHAR},
+		#{irdNum,jdbcType=VARCHAR},
+		#{accountNum,jdbcType=VARCHAR},
+		#{openBank,jdbcType=VARCHAR},
+		'0',
+		sysdate,
+		#{createName,jdbcType=VARCHAR}
+		)
+	</insert>
+
+	<update id="editCustomerInfo" parameterType="com.yhzn.model.customer.Customer">
+		update CUSTOMER_INFO set
+		NAME= #{name,jdbcType=VARCHAR},
+		UNIT_NAME = #{unitName,jdbcType=VARCHAR},
+		PHONE_NO= #{phoneNo,jdbcType=VARCHAR},
+		AREA= #{area,jdbcType=VARCHAR},
+		TYPE= #{type,jdbcType=VARCHAR},
+		UNIT_ADDR= #{unitAddr,jdbcType=VARCHAR},
+		IRD_NUM= #{irdNum,jdbcType=VARCHAR},
+		ACCOUNT_NUM= #{accountNum,jdbcType=VARCHAR},
+		OPEN_BANK= #{openBank,jdbcType=VARCHAR},
+		REMARK= #{remark,jdbcType=VARCHAR},
+		MODIFY_NAME = #{modifyName,jdbcType=VARCHAR},
+		MODIFY_DATE = sysdate
+		where ID = #{id,jdbcType=VARCHAR}
+	</update>
+
+	<select id="queryCustomerById" parameterType="java.lang.String"
+		resultType="com.yhzn.model.customer.Customer">
+		select
+		<include refid="Base_Column_List" />
+		from CUSTOMER_INFO
+		where 1 = 1 and DELETE_FLAG='0' and ID = #{id,jdbcType=VARCHAR}
+	</select>
+
+
+	<select id="queryCustomerInfoList" parameterType="map"
+		resultType="com.yhzn.model.customer.Customer">
+		select
+		<include refid="Base_Column_List" />
+		from CUSTOMER_INFO
+		where 1 = 1
+		and DELETE_FLAG='0'
+		<if test="name != null and name != ''">
+			and NAME like '%${name}%'
+		</if>
+		<if test="type != null and type != ''">
+			and TYPE like '%${type}%'
+		</if>
+		<if test="unitName != null and unitName != ''">
+			and UNIT_NAME like '%${unitName}%'
+		</if>
+	</select>
+	
+	<!-- 查询用户下拉框信息 -->
+	<select id="customerCombobox" resultType="com.yhzn.model.security.SysDict">
+		select ID,name text from CUSTOMER_INFO
+	</select>
+
+</mapper>

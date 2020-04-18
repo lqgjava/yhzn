@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yhzn.dao.storehouse.ProductDao">
+
+	<sql id="Base_Column_List">
+		ID,TYPE, NAME,SERIAL_NUMBER,CATEGORY,STANDARD,MODEL,UNIT,
+		BRAND,SUPPLIER,UNIT_PRICE,COST_PRICE,AMOUNT,REMARK,STOCK_AMOUNT,BAR_CODE
+	</sql>
+	
+	<select id="queryProductList" parameterType="map" resultType="com.yhzn.model.storehouse.Product">
+    select
+       <include refid="Base_Column_List"/>
+    from PRODUCT_INFO
+    where 1 = 1 
+    and DELETE_FLAG='0'
+     <if test="type != null and type != ''">
+        and TYPE like '%${type}%'
+      </if>
+      <if test="name != null and name != ''">
+        and NAME like '%${name}%'
+      </if>
+      <if test="standard != null and standard != ''">
+        and STANDARD like '%${standard}%'
+      </if>
+      <if test="model != null and model != ''">
+        and MODEL like '%${model}%'
+      </if>
+     <if test="brand != null and brand != ''">
+         and BRAND like '%${brand}%'
+      </if>
+      <if test="supplier != null and supplier != ''">
+         and SUPPLIER like '%${supplier}%'
+      </if>
+      order by  SERIAL_NUMBER ASC 
+  </select>
+	
+ <update id="deleteProductById" parameterType="java.lang.String">
+    update  PRODUCT_INFO set DELETE_FLAG='1' where ID = #{id,jdbcType=VARCHAR}
+  </update>
+  
+  
+  <insert id="insertProductInfo"  parameterType="com.yhzn.model.storehouse.Product">
+	  	insert into PRODUCT_INFO (
+	  		 ID,
+	  		 TYPE, 
+	  		 NAME,
+	  		 SERIAL_NUMBER,
+	  		 CATEGORY,
+	  		 STANDARD,
+	  		 MODEL,
+	  		 UNIT,
+			 BRAND,
+			 SUPPLIER,
+			 UNIT_PRICE,
+			 COST_PRICE,
+			 BAR_CODE,
+			 AMOUNT,
+		  	 STOCK_AMOUNT,
+			 REMARK,
+			 DELETE_FLAG,
+			 CREATE_DATE,
+			 CREATE_NAME
+	  	)values (
+		    #{id,jdbcType=VARCHAR},
+		    #{type,jdbcType=VARCHAR}, 
+		    #{name,jdbcType=VARCHAR}, 
+		    #{serialNumber,jdbcType=VARCHAR}, 
+		    #{category,jdbcType=VARCHAR}, 
+		    #{standard,jdbcType=VARCHAR}, 
+		    #{model,jdbcType=VARCHAR}, 
+		    #{unit,jdbcType=VARCHAR},
+		    #{brand,jdbcType=VARCHAR},
+		    #{supplier,jdbcType=NUMERIC}, 
+		    #{unitPrice,jdbcType=NUMERIC}, 
+		    #{costPrice,jdbcType=VARCHAR}, 
+		    #{barCode,jdbcType=VARCHAR},
+		    #{amount,jdbcType=VARCHAR}, 
+		    #{stockAmount,jdbcType=VARCHAR}, 
+		    #{remark,jdbcType=VARCHAR}, 
+		    '0', 
+		    sysdate, 
+		    #{createName,jdbcType=VARCHAR}
+	      )
+  </insert>
+  
+  <update id="editProductInfo" parameterType="com.yhzn.model.storehouse.Product">
+    update PRODUCT_INFO  set    
+           TYPE= #{type,jdbcType=VARCHAR}, 
+		   NAME= #{name,jdbcType=VARCHAR}, 
+		   SERIAL_NUMBER= #{serialNumber,jdbcType=VARCHAR}, 
+		   CATEGORY= #{category,jdbcType=VARCHAR}, 
+		   STANDARD= #{standard,jdbcType=VARCHAR},
+		   MODEL= #{model,jdbcType=VARCHAR},
+		   UNIT= #{unit,jdbcType=NUMERIC}, 
+		   BRAND= #{brand,jdbcType=NUMERIC}, 
+		   SUPPLIER= #{supplier,jdbcType=VARCHAR}, 
+		   UNIT_PRICE= #{unitPrice,jdbcType=VARCHAR}, 
+		   BAR_CODE= #{barCode,jdbcType=VARCHAR}, 
+		   COST_PRICE= #{costPrice,jdbcType=VARCHAR}, 
+		   REMARK= #{remark,jdbcType=VARCHAR}, 
+           MODIFY_NAME = #{modifyName,jdbcType=VARCHAR}, 
+           MODIFY_DATE = sysdate
+    where ID = #{id,jdbcType=VARCHAR}
+  </update>
+  
+   <select id="queryProductListByMap" parameterType="map" resultType="com.yhzn.model.storehouse.Product">
+    select
+       <include refid="Base_Column_List"/>
+    from PRODUCT_INFO
+    where 1 = 1 
+    and DELETE_FLAG='0'
+     <if test="type != null and type != ''">
+        and TYPE like '%${type}%'
+      </if>
+      <if test="name != null and name != ''">
+        and NAME like '%${name}%'
+      </if>
+      <if test="standard != null and standard != ''">
+        and STANDARD like '%${standard}%'
+      </if>
+      <if test="model != null and model != ''">
+        and MODEL like '%${model}%'
+      </if>
+     <if test="brand != null and brand != ''">
+         and BRAND like '%${brand}%'
+      </if>
+      <if test="supplier != null and supplier != ''">
+         and SUPPLIER like '%${supplier}%'
+      </if>
+      order by NAME ASC
+  </select>
+  
+  <select id="queryProductInfoById" parameterType="java.lang.String" 
+  		  resultType="com.yhzn.model.storehouse.Product">
+    select 
+    	 <include refid="Base_Column_List"/>
+	    from PRODUCT_INFO
+	    where 1 = 1  and DELETE_FLAG='0'   and ID = #{id}
+  </select>
+  
+  <!--xwf  -->
+  	<select id="queryProductTopType"
+		resultType="com.yhzn.model.storehouse.Product">
+		select  id,name,standard,model,unit,BRAND,SUPPLIER,UNIT_PRICE,AMOUNT from product_info WHERE DELETE_FLAG='0'
+	</select>
+	
+	<select id="queryTypeByParentId"
+		resultType="com.yhzn.model.storehouse.Product">
+		SELECT
+		a.id,
+		a.TYPE,
+		a.name,
+		a.serial_number serialNumber,
+		a.category,
+		a.standard,
+		a.model,
+		a.unit,
+		a.brand,
+		a.supplier,
+		a.COST_PRICE costPrice,
+		a.remark,
+		a.delete_Flag deleteFlag,
+		a.create_Date createDate,
+		a.create_Name createName,
+		a.modify_Date modifyDate,
+		a.modify_Name modifyName,
+		a.bar_Code barCode,
+		nvl(a.AMOUNT,'0') amount
+		FROM
+		product_info a
+		where type=#{type}
+	</select>
+	<delete id="deleteProductByParentId"
+		parameterType="java.lang.String">
+		delete PRODUCT_INFO where ID =
+		#{id,jdbcType=VARCHAR}
+	</delete>
+</mapper>

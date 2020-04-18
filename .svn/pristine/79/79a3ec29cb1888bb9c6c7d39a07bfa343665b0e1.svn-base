@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yhzn.dao.security.SysRoleDao">
+
+	<sql id="Base_Column_List">
+		ID, ROLE_NAME,DESCRIPTION
+	</sql>
+
+	<select id="querySysRoleList" parameterType="map"
+		resultType="com.yhzn.model.security.SysRole">
+		select
+		<include refid="Base_Column_List" />
+		,
+		to_char(CREATE_DATE,'yyyy/mm/dd') as createDateStr,CREATE_NAME createName
+		from SYS_ROLE
+		where 1 = 1
+		<if test="roleName != null and roleName != ''">
+			and ROLE_NAME like '%${roleName}%'
+		</if>
+	</select>
+
+	<select id="findSysRoleById" parameterType="java.lang.String"
+		resultType="com.yhzn.model.security.SysRole">
+		select
+		<include refid="Base_Column_List" />
+		from SYS_ROLE
+		where 1 = 1 and id = #{id}
+	</select>
+
+	<select id="findSysRoleList" parameterType="java.lang.String"
+		resultType="com.yhzn.model.security.SysRole">
+		select
+		<include refid="Base_Column_List" />
+		from SYS_ROLE order by ROLE_NAME
+	</select>
+
+	<delete id="deleteRoleById" parameterType="java.lang.String">
+		delete from SYS_ROLE
+		where ID = #{id,jdbcType=VARCHAR}
+	</delete>
+
+	<insert id="saveSysRole"
+		parameterType="com.yhzn.model.security.SysRole">
+		insert into SYS_ROLE (
+		ID,
+		ROLE_NAME,
+		<if test="description != null">
+			DESCRIPTION,
+		</if>
+		CREATE_NAME,
+		DELETE_FLAG,
+		CREATE_DATE
+		)values (
+		#{id,jdbcType=VARCHAR},
+		#{roleName,jdbcType=VARCHAR},
+		<if test="description != null">
+			#{description,jdbcType=VARCHAR},
+		</if>
+	  #{createName,jdbcType=VARCHAR}, 
+        '0',
+        sysdate
+        )
+	</insert>
+
+	<update id="updateSysRole"
+		parameterType="com.yhzn.model.security.SysRole">
+		update SYS_ROLE
+		<set>
+			ROLE_NAME = #{roleName,jdbcType=VARCHAR},
+			DESCRIPTION = #{description,jdbcType=VARCHAR},
+
+		</set>
+		where ID = #{id,jdbcType=VARCHAR}
+	</update>
+	<delete id="deletePermissionByRoleId" parameterType="string">
+		delete SYS_ROLE_PERMIS where role_id=#{roleId}
+	</delete>
+	<insert id="createPermission">
+		insert into SYS_ROLE_PERMIS values (#{id}, #{permissionId},#{roleId})
+	</insert>
+	<select id="permissionById" parameterType="string"
+		resultType="com.yhzn.model.security.Permission">
+		SELECT DISTINCT
+		ps.id,
+		ps.NAME name,
+		ps.DESCRIPTION description,
+		ps.url,
+		ps.perms,
+		ps.parent_id parentId,
+		ps.type,
+		ps.order_num orderNum,ps.icon 
+		FROM
+		SYS_ROLE_PERMIS rp
+		INNER JOIN PERMISSION ps ON rp.MODULE_ID = ps.id
+		LEFT OUTER JOIN PERMISSION pn ON ps.parent_id = pn.id
+		WHERE
+		rp.ROLE_ID = #{roleId}
+	</select>
+
+	<!-- 根据用户名字查询相应角色 -->
+	<select id="findRolesByUserName" parameterType="string"
+		resultType="string">
+		SELECT r.id
+		FROM SYS_USER u,SYS_ROLE r,SYS_USER_ROLE ur
+		WHERE u.USER_NAME=#{userName} and u.delete_flag='0'
+		AND u.ID = ur.USER_ID
+		AND ur.ROLE_ID = r.ID
+	</select>
+	<select id="MenupermissionByRoleId"
+		resultType="com.yhzn.model.security.Permission">
+		SELECT DISTINCT
+		ps.id,
+		ps.NAME name,
+		ps.DESCRIPTION description,
+		ps.url,
+		ps.perms,
+		ps.parent_id parentId,
+		ps.type,
+		ps.order_num orderNum,ps.icon 
+		FROM
+		SYS_ROLE_PERMIS rp
+		INNER JOIN PERMISSION ps ON rp.MODULE_ID = ps.id
+		LEFT OUTER JOIN PERMISSION pn ON ps.parent_id = pn.id
+		WHERE
+		rp.ROLE_ID = #{roleId} and ps.type=0 order by ps.order_num 
+	</select>
+	<select id="permissionByParentId"
+		resultType="com.yhzn.model.security.Permission">
+		SELECT DISTINCT 
+		ps.id,
+		ps.NAME name,
+		ps.DESCRIPTION description,
+		ps.url,
+		ps.perms,
+		ps.parent_id parentId,
+		ps.type,
+		ps.order_num orderNum,ps.icon 
+		FROM
+		SYS_ROLE_PERMIS rp
+		INNER JOIN PERMISSION ps ON rp.MODULE_ID = ps.id
+		LEFT OUTER JOIN PERMISSION pn ON ps.parent_id = pn.id
+		WHERE
+		rp.ROLE_ID =#{roleId} and ps.PARENT_ID=#{id} order by ps.order_num asc
+	</select>
+	<delete id="deleteRolePermission">
+	delete SYS_ROLE_PERMIS where MODULE_ID=#{id}
+	</delete>
+	<delete id="deleteSysRolePermisById" parameterType="string">
+	delete SYS_ROLE_PERMIS where role_id=#{id}
+	</delete>
+</mapper>

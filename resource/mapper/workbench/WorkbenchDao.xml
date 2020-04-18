@@ -1,0 +1,292 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yhzn.dao.workbench.WorkbenchDao">
+
+	<sql id="Base_Column_List">
+	    ID,TASK_NO,TASK_NAME,TASK_CONTENT,RECEIVE_NAME,RECEIVE_ID,REWARD,FINISH_DATE,STATUS,USER_ID,REMARK
+   </sql>
+   
+   <sql id="Rec_Column_List">
+      ID,TASK_ID,TASK_NO,TASK_NAME,TASK_CONTENT,FINISH_DATE,SINGEDR,SINGED_DATE,SINGED_STATUS,FEEDBACK_STATUS,EXEC_STATUS,REWARD,SENT_ID,USER_ID,REMARK,STATUS,REPORT_RESULT
+   </sql>
+	  
+	<select id="queryTaskList" parameterType="map" resultType="com.yhzn.model.workbench.Task">
+     select
+       <include refid="Base_Column_List"/>,
+       to_char(FINISH_DATE,'yyyy-mm-dd') as finishDateStr,
+       to_char(CREATE_DATE,'yyyy-mm-dd') as createDateStr
+    from TASK
+    where 1 = 1 
+    and DELETE_FLAG='0'
+     <if test="taskNo != null and taskNo != ''">
+        and TASK_NO like '%${taskNo}%'
+      </if>
+      <if test="taskName != null and taskName != ''">
+        and TASK_NAME like '%${entryName}%'
+      </if>
+      <if test="beginDate != null and beginDate != ''">
+         and CREATE_DATE<![CDATA[>=]]>to_date(#{beginDate},'yyyy-mm-dd')
+      </if>
+      <if test="endDate != null and endDate != ''">
+         and CREATE_DATE <![CDATA[<]]>to_date(#{endDate},'yyyy-mm-dd')
+      </if>
+      <if test="userId != null and userId != ''">
+        and USER_ID = #{userId}
+      </if>
+       order by CREATE_DATE desc
+  </select>
+  
+  <update id="deleteTaskById" parameterType="java.lang.String">
+    update  TASK set DELETE_FLAG='1'
+    where ID = #{id,jdbcType=VARCHAR}
+  </update>
+  
+  <insert id="insertTaskInfo"  parameterType="com.yhzn.model.workbench.Task">
+	  	insert into TASK (
+	  		 ID,
+	  		 TASK_NO,
+	  		 TASK_NAME,
+	  		 TASK_CONTENT,
+	  		 RECEIVE_NAME,
+	  		 RECEIVE_ID,
+	  		 REWARD,
+	  		 <if test="finishDateStr !=null and finishDateStr != ''">
+	  		 FINISH_DATE,
+	  		 </if>
+	  		 STATUS,
+	  		 USER_ID,
+	  		 REMARK,
+			 DELETE_FLAG,
+			 CREATE_DATE,
+			 CREATE_NAME
+	  	)values (
+		    #{id,jdbcType=VARCHAR},
+		    #{taskNo,jdbcType=VARCHAR}, 
+		    #{taskName,jdbcType=VARCHAR}, 
+		    #{taskContent,jdbcType=VARCHAR}, 
+		    #{receiveName,jdbcType=VARCHAR}, 
+		    #{receiveId,jdbcType=VARCHAR},
+		    #{reward,jdbcType=VARCHAR},
+		     <if test="finishDateStr !=null and finishDateStr != ''">
+		    to_date(#{finishDateStr,jdbcType=VARCHAR},'yyyy-MM-dd'), 
+		    </if>
+		    #{status,jdbcType=VARCHAR},
+		    #{userId,jdbcType=VARCHAR}, 
+		    #{remark,jdbcType=VARCHAR}, 
+		    '0', 
+		    SYSDATE, 
+		    #{createName,jdbcType=VARCHAR}
+	      )
+  </insert>
+  
+  
+  <update id="editTaskInfo" parameterType="com.yhzn.model.workbench.Task">
+    update TASK  set    
+		   TASK_NO = #{taskNo,jdbcType=VARCHAR}, 
+           TASK_NAME = #{taskName,jdbcType=VARCHAR},
+		   TASK_CONTENT = #{taskContent,jdbcType=VARCHAR}, 
+		   RECEIVE_NAME = #{receiveName,jdbcType=VARCHAR},
+		   RECEIVE_ID = #{receiveId,jdbcType=VARCHAR}, 
+		   REWARD = #{reward,jdbcType=VARCHAR}, 
+		   REMARK = #{remark,jdbcType=VARCHAR}, 
+		   <if test="finishDateStr !=null and finishDateStr != ''">
+		   FINISH_DATE= to_date(#{finishDateStr,jdbcType=VARCHAR},'yyyy-MM-dd'), 
+		   </if>
+           MODIFY_NAME = #{modifyName,jdbcType=VARCHAR}, 
+           MODIFY_DATE = <![CDATA[sysdate]]>
+    where ID = #{id,jdbcType=VARCHAR}
+  </update>
+  
+  <select id="queryTaskById" parameterType="java.lang.String" resultType="com.yhzn.model.workbench.Task">
+  		select
+  			<include refid="Base_Column_List"/>,
+  			CREATE_NAME as createName,
+	         to_char(FINISH_DATE,'yyyy-mm-dd') as finishDateStr
+	    from TASK
+	    where 1 = 1 
+	    and DELETE_FLAG='0'
+        and ID = #{id}
+  </select>
+  
+  <update id="updateTaskStatus" parameterType="map">
+    update TASK  set    
+		   STATUS= #{status,jdbcType=VARCHAR}, 
+           MODIFY_NAME = #{modifyName,jdbcType=VARCHAR}, 
+           MODIFY_DATE = SYSDATE
+    where ID = #{id,jdbcType=VARCHAR}
+  </update>
+  
+  
+  <select id="queryRecTaskList" parameterType="map" resultType="com.yhzn.model.workbench.TaskReveice">
+     select
+       <include refid="Rec_Column_List"/>,
+       CREATE_NAME as createName,
+       to_char(FINISH_DATE,'yyyy-mm-dd') as finishDateStr,
+       to_char(CREATE_DATE,'yyyy-mm-dd') as createDateStr
+    from TASK_RECEIVE
+    where 1 = 1 
+    and DELETE_FLAG='0'
+     <if test="taskNo != null and taskNo != ''">
+        and TASK_NO like '%${taskNo}%'
+      </if>
+      <if test="taskName != null and taskName != ''">
+        and TASK_NAME like '%${entryName}%'
+      </if>
+      <if test="beginDate != null and beginDate != ''">
+         and CREATE_DATE<![CDATA[>=]]>to_date(#{beginDate},'yyyy-mm-dd')
+      </if>
+      <if test="endDate != null and endDate != ''">
+         and CREATE_DATE <![CDATA[<]]>to_date(#{endDate},'yyyy-mm-dd')
+      </if>
+      <if test="userId != null and userId != ''">
+        and USER_ID = #{userId}
+      </if>
+  </select>
+  
+  <insert id="insertTaskReveiceInfo"  parameterType="com.yhzn.model.workbench.TaskReveice">
+	  	insert into TASK_RECEIVE (
+	  		 ID,
+	  		 TASK_ID,
+	  		 TASK_NO,
+	  		 TASK_NAME,
+	  		 TASK_CONTENT,
+	  		 SINGEDR,
+	  		 <if test="finishDateStr !=null and finishDateStr != ''">
+	  		 FINISH_DATE,
+	  		 </if>
+	  		 REWARD,
+	  		 SENT_ID,
+	  		 USER_ID,
+	  		 REMARK,
+			 DELETE_FLAG,
+			 CREATE_DATE,
+			 CREATE_NAME
+	  	)values (
+		    #{id,jdbcType=VARCHAR},
+		    #{taskId,jdbcType=VARCHAR}, 
+		    #{taskNo,jdbcType=VARCHAR}, 
+		    #{taskName,jdbcType=VARCHAR}, 
+		    #{taskContent,jdbcType=VARCHAR}, 
+		    #{singedr,jdbcType=VARCHAR}, 
+		     <if test="finishDateStr !=null and finishDateStr != ''">
+		    to_date(#{finishDateStr,jdbcType=VARCHAR},'yyyy-MM-dd'), 
+		    </if>
+		    #{reward,jdbcType=VARCHAR},
+		    #{sentId,jdbcType=VARCHAR},
+		    #{userId,jdbcType=VARCHAR}, 
+		    #{remark,jdbcType=VARCHAR}, 
+		    '0', 
+		    SYSDATE, 
+		    #{createName,jdbcType=VARCHAR}
+	      )
+  </insert>
+  
+  
+  <update id="updateTaskReveice" parameterType="map">
+    update TASK_RECEIVE  set   
+           <if test = 'status == "1"'> 
+		   SINGED_DATE =  SYSDATE, 
+		   </if>
+		   <if test="status !=null and status != ''">
+		   STATUS= #{status,jdbcType=VARCHAR}, 
+		   </if>
+		   <if test="reason !=null and reason != ''">
+		   REASON= #{reason,jdbcType=VARCHAR}, 
+		   </if>
+		   <if test="reportResult !=null and reportResult != ''">
+		   REPORT_RESULT= #{reportResult,jdbcType=VARCHAR}, 
+		   </if>
+           MODIFY_NAME = #{modifyName,jdbcType=VARCHAR}, 
+           MODIFY_DATE = SYSDATE
+    where ID = #{id,jdbcType=VARCHAR}
+  </update>
+  
+   <select id="findRecTaskList" parameterType="java.lang.String" resultType="com.yhzn.model.workbench.TaskReveice">
+     select
+       <include refid="Rec_Column_List"/>,
+       to_char(SINGED_DATE,'yyyy/mm/dd') as singedDateStr
+    from TASK_RECEIVE
+    where 1 = 1  and DELETE_FLAG='0'  and TASK_ID = #{taskId,jdbcType=VARCHAR}
+  </select>
+  <!-- <select id="queryETPurBillList"  parameterType="java.lang.String" 
+  		resultType="com.yhzn.model.storehouse.PurBillModel">
+    select
+       <include refid="Pur_Column_List"/>
+    from PURCHASE_BILL
+    where PUR_ID = #{id,jdbcType=VARCHAR} order by SERIAL_NUMBER asc
+  </select>
+  
+  
+   <delete id="deleteETPurBillByPurId" parameterType="java.lang.String" >
+		delete from PURCHASE_BILL where PUR_ID= #{id,jdbcType=VARCHAR}
+  </delete>
+  
+  <insert id="addETPurBill" parameterType="com.yhzn.model.storehouse.PurBillModel">
+  		insert into PURCHASE_BILL (
+  			 ID,
+  			 PUR_ID,
+  			 PUR_NO,
+  			 NAME,
+  			 STANDARD,
+  			 MODEL,
+  			 UNIT,
+  			 BRAND,
+  			 UNIT_PRICE,
+  			 COST_PRICE,
+  			 AMOUNT,
+  			 TOTAL_PRICE,
+  			 ENTRY_AMOUNT,
+  			 STATUS,
+  			 TYPE,
+  			 SERIAL_NUMBER,
+	  		 REMARK,
+			 DELETE_FLAG,
+			 CREATE_DATE,
+			 CREATE_NAME
+	  	)values (
+		    #{id,jdbcType=VARCHAR},
+		    #{purId,jdbcType=VARCHAR}, 
+		    #{purNo,jdbcType=VARCHAR}, 
+		    #{name,jdbcType=VARCHAR}, 
+		    #{standard,jdbcType=VARCHAR}, 
+		    #{model,jdbcType=VARCHAR}, 
+		    #{unit,jdbcType=VARCHAR}, 
+		    #{brand,jdbcType=VARCHAR}, 
+		    #{unitPrice,jdbcType=VARCHAR}, 
+		    #{costPrice,jdbcType=VARCHAR}, 
+		    #{amount,jdbcType=VARCHAR}, 
+		    #{totalPrice,jdbcType=VARCHAR},
+		    #{entryAmount,jdbcType=VARCHAR}, 
+		    #{status,jdbcType=VARCHAR}, 
+		    #{type,jdbcType=VARCHAR}, 
+		    #{serialNumber,jdbcType=VARCHAR},
+		    #{remark,jdbcType=VARCHAR}, 
+		    '0', 
+		    sysdate, 
+		    #{createName,jdbcType=VARCHAR}
+	      )
+  
+  </insert>
+  
+
+   
+   <update id="updateEntryStockStatus" parameterType="map">
+    update ENTRY_STOCK  set    
+  		  <if test="status !=null and status != ''">
+		   STATUS =  #{status,jdbcType=VARCHAR}, 
+		   </if>
+		   <if test="entryStatus !=null and entryStatus != ''">
+		   ENTRY_STATUS =  #{entryStatus,jdbcType=VARCHAR}, 
+		   </if>
+		   <if test="notPass !=null and notPass != ''">
+		   NOT_PASS =  #{notPass,jdbcType=VARCHAR}, 
+		   </if>
+		   <if test="finishDateStr !=null and finishDateStr != ''">
+		   FINISH_DATE= to_date(#{finishDateStr,jdbcType=VARCHAR},'yyyy-MM-dd'), 
+		   </if>
+           MODIFY_NAME = #{modifyName,jdbcType=VARCHAR}, 
+           MODIFY_DATE = sysdate
+    where ID = #{id,jdbcType=VARCHAR}
+  </update> -->
+
+</mapper>

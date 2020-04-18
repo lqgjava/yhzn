@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yhzn.dao.common.CommonPhotoDao">
+
+<resultMap id="BaseResultMap" type="com.yhzn.model.common.CommonPhoto"></resultMap>
+ 
+	
+	<insert id="insertCommonPhotoInfo"  parameterType="com.yhzn.model.common.CommonPhoto">
+		
+		insert into COMMON_PHOTO (
+	  		 ID,
+	  		 PARENT_ID, 
+	  		 PHOTO, 
+	  		 WIDTH,
+	  		 HEIGHT,
+	  		 PHOTO_NAME,
+	  		 TYPE,
+			 REMARK,
+			 DELETE_FLAG,
+			 CREATE_DATE,
+			 CREATE_NAME
+	  	)values (
+		    #{id,jdbcType=VARCHAR},
+		    #{parentId,jdbcType=VARCHAR}, 
+		    #{image,jdbcType=BLOB}, 
+		    #{width,jdbcType=VARCHAR}, 
+		    #{height,jdbcType=VARCHAR}, 
+		    #{photoName,jdbcType=VARCHAR}, 
+		    #{type,jdbcType=VARCHAR}, 
+		    #{remark,jdbcType=VARCHAR}, 
+		    '0', 
+		    sysdate, 
+		    #{createName,jdbcType=VARCHAR}
+	      )
+	
+	</insert>
+	
+	<delete id="deleteCommonPhotoInfo" parameterType="java.lang.String">
+		delete from	COMMON_PHOTO where id= #{id,jdbcType=VARCHAR}
+	</delete>
+	
+	<select id="findCommonPhotoById" 
+			parameterType="java.lang.String" 
+			resultType="com.yhzn.model.common.CommonPhoto">
+		select 
+			 ID as id,
+	  		 PARENT_ID as parentId, 
+	  		 PHOTO as image, 
+	  		 WIDTH as width,
+	  		 HEIGHT as height,
+	  		 PHOTO_NAME as photoName,
+	  		 TYPE as type,
+			 REMARK as remark
+		from COMMON_PHOTO where id= #{id,jdbcType=VARCHAR}
+	
+	</select>
+	<select id="findCommonPhotoByparentId" 	resultType="com.yhzn.model.common.CommonPhoto">
+		select 
+			 ID as id,
+	  		 PARENT_ID as parentId, 
+	  		 PHOTO as image, 
+	  		 WIDTH as width,
+	  		 HEIGHT as height,
+	  		 PHOTO_NAME as photoName,
+	  		 TYPE as type,
+			 REMARK as remark
+		from COMMON_PHOTO where PARENT_ID= #{parentId,jdbcType=VARCHAR}
+	</select>
+
+<delete id="deleteCommonPhotoInfoByLinkId">
+	delete  from COMMON_PHOTO  where parent_id=#{id}  
+</delete>
+</mapper>

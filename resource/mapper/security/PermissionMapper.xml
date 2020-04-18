@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yhzn.dao.security.PermissiondAO">
+	<resultMap id="BaseResultMap"
+		type="com.yhzn.model.security.Permission">
+		<!-- WARNING - @mbggenerated -->
+		<id column="id" property="id" jdbcType="INTEGER" />
+		<result column="name" property="name" jdbcType="VARCHAR" />
+		<result column="description" property="description"
+			jdbcType="VARCHAR" />
+		<result column="url" property="url" jdbcType="VARCHAR" />
+		<result column="perms" property="perms" jdbcType="VARCHAR" />
+		<result column="parent_id" property="parentId"
+			jdbcType="INTEGER" />
+		<result column="type" property="type" jdbcType="INTEGER" />
+		<result column="order_num" property="orderNum"
+			jdbcType="INTEGER" />
+		<result column="icon" property="icon" jdbcType="VARCHAR" />
+		<result column="status" property="status" jdbcType="INTEGER" />
+		<result column="create_time" property="createTime"
+			jdbcType="TIMESTAMP" />
+		<result column="update_time" property="updateTime"
+			jdbcType="TIMESTAMP" />
+	</resultMap>
+	<sql id="Base_Column_List">
+		<!-- WARNING - @mbggenerated -->
+		id, name, description, url, perms, parent_id, type,
+		order_num, icon,
+		status, create_time, update_time
+	</sql>
+	<select id="selectByPrimaryKey" parameterType="string"
+		resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from permission where id=#{id}
+	</select>
+	<select id="selectAllPerms" parameterType="integer"
+		resultMap="BaseResultMap">
+		SELECT
+		<include refid="Base_Column_List" />
+		FROM permission WHERE status=#{status} ORDER BY order_num
+	</select>
+
+	<select id="selectAllMenuName" parameterType="integer"
+		resultMap="BaseResultMap">
+		SELECT id, `name`, parent_id, `type` FROM permission WHERE
+		status=#{status} AND `type` in (0,1) ORDER BY order_num
+	</select>
+	<select id="selectAllMenu" resultMap="BaseResultMap">
+		SELECT id, name, description, url, perms, parent_id, type,
+		order_num, icon,
+		status FROM
+		permission WHERE status=1 AND type =0 ORDER BY
+		order_num
+	</select>
+	<select id="selectAreaByParent" parameterType="string"
+		resultMap="BaseResultMap">
+		SELECT id, name, description, url, perms, parent_id, type,
+		order_num, icon,
+		status FROM permission WHERE status=1 AND type =1
+		and
+		parent_id=#{id} ORDER BY order_num
+	</select>
+	<select id="selectButtonByParent" parameterType="string"
+		resultMap="BaseResultMap">
+		SELECT id, name, description, url, perms, parent_id, type,
+		order_num, icon,
+		status FROM permission WHERE status=1 AND type =2
+		and
+		parent_id=#{id} ORDER BY order_num
+	</select>
+	<insert id="insert"
+		parameterType="com.yhzn.model.security.Permission">
+		INSERT INTO PERMISSION (ID,
+		NAME,
+		DESCRIPTION,
+		URL,
+		PERMS,
+		PARENT_ID,
+		TYPE,
+		ORDER_NUM,
+		ICON,
+		STATUS
+		) VALUES (#{id}, #{name},
+		#{description},#{url},
+		#{perms}, #{parentId}, #{type},#{orderNum},
+		#{icon}, #{status})
+	</insert>
+	<update id="updateById"	parameterType="com.yhzn.model.security.Permission">
+		update PERMISSION set name=#{name},
+		DESCRIPTION=#{description},
+		URL=#{url},
+		PERMS=#{perms},
+		PARENT_ID=#{parentId},
+		TYPE=#{type},
+		ORDER_NUM=#{orderNum},
+		ICON=#{icon},
+		STATUS=#{status} where id=#{id}
+	</update>
+	<select id="selectSubPermsByParentId" parameterType="string" resultType="integer">
+		select count(id) from PERMISSION where PARENT_ID=#{id}
+	</select>
+	<update id="updateStatusById">
+	update PERMISSION set STATUS=#{status} where id=#{id}
+	</update>
+	
+	</mapper>

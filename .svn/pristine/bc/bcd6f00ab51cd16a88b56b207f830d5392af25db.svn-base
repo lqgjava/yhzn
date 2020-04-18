@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yhzn.dao.security.SysDictDao">
+	
+   <sql id="Base_Column_List">
+    ID,	DICT_LEVEL,DICT_KEY,PARENT_KEY,ROOT_KEY,DICT_VALUE,DICT_SORT,DICT_PY,REMARK
+   </sql>
+  
+  
+	<!-- 根据rootKey获取字典值 -->
+ 	<select id="getDictValue" parameterType="map" resultType="HashMap">
+ 		select 
+ 			s.dict_key as id,
+ 			s.dict_value1 as text,
+ 			s.parent_key as parentKey,
+ 			s.leaf_flag as isLeaf,
+ 			s.dict_level as sLevel
+ 		from sys_dict s
+ 		where 1=1 
+ 		and s.root_key = '${rootKey}'
+ 		and s.parent_key = '${parentKey}'
+ 		order by s.dict_key asc
+ 	</select>
+ 	
+ 	<!-- 根据rootKey获取字典值 -->
+ 	<select id="findDictListByMap" parameterType="map" resultType="com.yhzn.model.security.SysDict">
+ 		select 
+ 		    id as id,
+ 			dict_key as dictKey,
+ 			dict_value as dictValue,
+ 			parent_key as parentKey
+ 		from sys_dict 
+ 		where 1=1 
+ 		<if test="rootKey != null and rootKey != ''">
+ 		and root_key = '${rootKey}'
+ 		</if>
+ 		<if test="parentKey != null and parentKey != ''">
+ 		and parent_key = '${parentKey}'
+ 		</if>
+ 		and delete_flag='0'
+ 		order by dict_key asc
+ 	</select>
+ 	
+ 	<select id="getDictValueByDictKey" parameterType="map" resultType="string">
+ 		select 
+ 			s.dict_value1
+ 		from sys_dict s
+ 		where 1=1 
+ 		and s.dict_key = '${organId}'
+ 		and s.root_key = 'GXSDM'
+ 	</select>
+ 	
+ 	
+  <select id="querySysDictList" parameterType="map" resultType="com.yhzn.model.security.SysDict">
+    select
+       <include refid="Base_Column_List"/>,
+       DICT_SORT as dictSortStr,
+       to_char(CREATE_DATE,'yyyy/mm/dd') as createDateStr
+    from SYS_DICT
+    where 1 = 1 and DELETE_FLAG='0'
+     <if test="dictValue != null and dictValue != ''">
+        and DICT_VALUE like '%${dictValue}%'
+      </if>
+      <if test="rootKey != null and rootKey != ''">
+ 		and root_key = '${rootKey}'
+ 		</if>
+ 		<if test="parentKey != null and parentKey != ''">
+ 		and parent_key = '${parentKey}'
+ 		</if>
+ 		<if test="dictLevel != null and dictLevel != ''">
+ 		and dict_level = '${dictLevel}'
+ 		</if>
+  </select>
+ 	
+ 	
+ 	<insert id="insertSysDict" parameterType="com.yhzn.model.security.SysDict">
+    insert into SYS_DICT
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+        ID,	
+        DICT_LEVEL,
+        DICT_KEY,
+        PARENT_KEY,
+        ROOT_KEY,
+        DICT_VALUE,
+        DICT_SORT,
+        DICT_PY,
+        REMARK,
+        CREATE_NAME,
+        CREATE_DATE,
+        DELETE_FLAG
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+        #{id,jdbcType=VARCHAR},
+        #{dictLevel,jdbcType=VARCHAR},
+        #{dictKey,jdbcType=VARCHAR},
+        #{parentKey,jdbcType=VARCHAR},
+        #{rootKey,jdbcType=VARCHAR},
+        #{dictValue,jdbcType=VARCHAR},
+        #{dictSort,jdbcType=NUMERIC},
+        #{dictPy,jdbcType=VARCHAR},
+        #{remark,jdbcType=VARCHAR},
+        #{createName,jdbcType=VARCHAR},
+        sysdate,
+        '0'
+    </trim>
+  </insert>
+ 	
+ 	<update id="editSysDict" parameterType="com.yhzn.model.security.SysDict">
+     update SYS_DICT  set    
+<!--      		DICT_LEVEL= #{dictLevel,jdbcType=VARCHAR}, -->
+       		DICT_KEY= #{dictKey,jdbcType=VARCHAR},
+<!-- 	        PARENT_KEY= #{parentKey,jdbcType=VARCHAR}, -->
+<!-- 	        ROOT_KEY= #{rootKey,jdbcType=VARCHAR}, -->
+	        DICT_VALUE= #{dictValue,jdbcType=VARCHAR},
+	        DICT_SORT= #{dictSort,jdbcType=NUMERIC},
+	        DICT_PY= #{dictPy,jdbcType=VARCHAR},
+	        REMARK= #{remark,jdbcType=VARCHAR},
+            MODIFY_NAME = #{modifyName,jdbcType=VARCHAR}, 
+            MODIFY_DATE = <![CDATA[sysdate]]>
+   	 where ID = #{id,jdbcType=VARCHAR}
+  </update>
+  
+  
+  <update id="deleteSysDictByMap" parameterType="map">
+  		update SYS_DICT set DELETE_FLAG ='1'  where 1=1 
+  		<if test="id != null and id != ''">
+  			and ID = #{id,jdbcType=VARCHAR}
+  		</if>
+  		 <if test="rootKey != null and rootKey != ''">
+ 			and root_key = '${rootKey}'
+ 		</if>
+ 		<if test="parentKey != null and parentKey != ''">
+ 			and parent_key = '${parentKey}'
+ 		</if>
+  </update>
+  
+   <update id="deleteSysDictById" parameterType="java.lang.String">
+  		update SYS_DICT set DELETE_FLAG ='1'  where  ID = #{id,jdbcType=VARCHAR}
+  </update>
+</mapper>

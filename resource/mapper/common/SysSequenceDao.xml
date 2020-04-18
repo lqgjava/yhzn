@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yhzn.dao.common.SysSequenceDao">
+
+<resultMap id="BaseResultMap" type="com.yhzn.model.common.SysSequence"></resultMap>
+ 
+	<select id="findMaxSeqById"
+		parameterType="java.util.HashMap"
+		resultType="com.yhzn.model.common.SysSequence">
+		select
+			ID as id,
+			MAX_SEQ as maxSeq,
+			TABLE_NAME as tableName,
+			CUR_DATE as curDate,
+			REMARK as remark,
+			CREATE_NAME as createName,
+			CREATE_DATE as createDate
+			from SYS_SEQUENCE  
+			where 1=1
+			 <if test="tableName != null and tableName != ''">
+			 	and TABLE_NAME = #{tableName}
+			 </if>
+			 <if test="curDate != null and curDate != ''">
+			 	and CUR_DATE = #{curDate}
+			 </if>
+			for update
+	</select>
+	
+	<insert id="insertSysSequence"
+		parameterType="com.yhzn.model.common.SysSequence">
+		insert into SYS_SEQUENCE
+		(
+			 ID,
+			 MAX_SEQ,
+			 TABLE_NAME,
+			 CUR_DATE,
+			 REMARK,
+			 CREATE_NAME,
+			 CREATE_DATE
+		) values (
+			 #{id,jdbcType=VARCHAR},
+			 #{maxSeq,jdbcType=VARCHAR}, 
+		     #{tableName,jdbcType=VARCHAR}, 
+		     #{curDate,jdbcType=VARCHAR}, 
+		     #{remark,jdbcType=VARCHAR}, 
+			 #{createName,jdbcType=VARCHAR},
+			 sysdate
+		 )
+	</insert>
+	
+	
+	<update id="updateMaxSeqById"
+		parameterType="com.yhzn.model.common.SysSequence">
+		update SYS_SEQUENCE set
+			MAX_SEQ = #{maxSeq,jdbcType=VARCHAR}, 
+			<if test="tableName != null and tableName != ''">
+			TABLE_NAME = #{tableName,jdbcType=VARCHAR}, 
+			</if>
+			<if test="curDate != null and curDate != ''">
+			CUR_DATE = #{curDate,jdbcType=VARCHAR}, 
+			</if>
+			<if test="remark != null and remark != ''">
+			REMARK = #{remark,jdbcType=VARCHAR}, 
+			</if>
+	        MODIFY_NAME = #{modifyName,jdbcType=VARCHAR}, 
+	        MODIFY_DATE = sysdate
+		where ID=#{id}
+	</update>
+	
+
+
+</mapper>

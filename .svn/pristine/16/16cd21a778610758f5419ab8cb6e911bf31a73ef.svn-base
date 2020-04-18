@@ -1,0 +1,230 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yhzn.dao.finance.PayableDao">
+	<select id="QueryALL" parameterType="com.yhzn.model.finance.PayableModel" resultType="com.yhzn.model.finance.PayableModel">
+		select ID id,
+		COMPANY company,
+		CHARGE_MAN chargeMan,
+		CHARGE_TEL
+		chargeTel,
+		FINANCE_MAN financeMan,
+		FINANCE_TEL financeTel,
+		MONEY money,
+		REMARK remark,
+		to_char(INSERT_DATE,'YYYY-MM-DD') insertDate
+		from PAYABLE_BILL
+		<where>
+			<if test="chargeMan!=null and chargeMan!=''">
+				and CHARGE_MAN like #{chargeMan}
+			</if>
+			<if test="company!=null and company!=''">
+				and company like #{company}
+			</if>
+		</where>
+		order by INSERT_DATE desc
+	</select>
+	<select id="QueryById" resultType="com.yhzn.model.finance.PayableDetailsModel">
+		SELECT
+		a.ID id,
+		a.paiable_id financeId,
+		a.CONTRACT_NO contractNo,
+		a.DETAIL_MONEY detailMoney,
+		a.DETAIL_REMARK detailRemark,
+		a.UNPAID_MONEY unPaydMoney,
+		a.RECEPIT_MONEY recepitMoney,
+		to_char( a.INSERT_DATE, 'YYYY-MM-DD' ) insertDate,
+		a.MODIFY_DATE monifyDate,
+		b.TRUE_NAME insertName,
+		a.MODIFY_NAME modeifyName,
+		a.DELETE_FLAG deleteFlag ,
+		to_char(a.JOIN_DATE,'YYYY-MM-DD HH24:MI:SS') joinDate,
+		to_char(a.NEXT_DATE,'YYYY-MM-DD HH24:MI:SS') nextDate
+		FROM
+		PAYABLE_BILL_DETAIL a left join SYS_USER b ON a.INSERT_NAME = b.ID
+		WHERE
+		a.PAIABLE_ID =#{id}
+		<if test='unPaydMoney=="0"'>
+			and a.UNPAID_MONEY &gt; 0
+		</if>
+		<if test='unPaydMoney=="1"'>
+			and a.UNPAID_MONEY &lt; 6000
+		</if>
+		<if test='unPaydMoney=="2"'>
+			and a.UNPAID_MONEY&gt;6000
+		</if>
+		<if test='unPaydMoney=="3"'>
+
+		</if>
+		order by CONTRACT_NO,JOIN_DATE asc
+
+
+	</select>
+	<select id="QueryByIdT" resultType="com.yhzn.model.finance.PayableDetailsModel">
+		SELECT
+		a.ID id,
+		a.paiable_id financeId,
+		a.CONTRACT_NO contractNo,
+		a.DETAIL_MONEY detailMoney,
+		a.DETAIL_REMARK detailRemark,
+		a.UNPAID_MONEY unPaydMoney,
+		a.RECEPIT_MONEY recepitMoney,
+		to_char( a.INSERT_DATE, 'YYYY-MM-DD' ) insertDate,
+		a.MODIFY_DATE monifyDate,
+		b.TRUE_NAME insertName,
+		a.MODIFY_NAME modeifyName,
+		a.DELETE_FLAG deleteFlag ,
+		to_char(a.JOIN_DATE,'YYYY-MM-DD HH24:MI:SS') joinDate,
+		FROM
+		PAYABLE_BILL_DETAIL a left join SYS_USER b ON a.INSERT_NAME = b.ID where PAIABLE_ID=#{id}
+		<if test='unPaydMoney=="1"'>
+			and a.UNPAID_MONEY &gt; 0
+		</if>
+		<if test='unPaydMoney=="2"'>
+			and a.UNPAID_MONEY &lt; 6000
+		</if>
+		<if test='unPaydMoney=="3"'>
+			and a.UNPAID_MONEY&gt;0
+		</if>
+		<if test='unPaydMoney=="4"'>
+		</if>
+		order by CONTRACT_NO,JOIN_DATE asc
+
+
+	</select>
+	<insert id="insertFinance" parameterType="com.yhzn.model.finance.PayableModel">
+		insert into PAYABLE_BILL
+		(
+		ID,
+		COMPANY,
+		CHARGE_MAN,
+		CHARGE_TEL,
+		FINANCE_MAN,
+		FINANCE_TEL,
+		MONEY,
+		REMARK,
+		INSERT_DATE,
+		INSERT_NAME,
+		DELETE_FLAG
+		)
+		values(#{id }, #{company }, #{chargeMan },
+		#{chargeTel }, #{financeMan },
+		#{financeTel }, #{money }, #{remark },
+		to_date(#{insertDate }, 'YYYY-MM-DD HH24:MI:SS'),#{insertName} ,0 )
+	</insert>
+	<update id="editReceivableDetails" parameterType="com.yhzn.model.finance.PayableDetailsModel">
+		update PAYABLE_BILL_DETAIL set
+		PAIABLE_ID=#{financeId},
+		CONTRACT_NO=#{contractNo},
+		DETAIL_MONEY=#{detailMoney},
+		DETAIL_REMARK=#{detailRemark},
+		UNPAID_MONEY=#{unPaydMoney},
+		RECEPIT_MONEY=#{recepitMoney},
+		MODIFY_DATE=to_date(#{monifyDate},
+		'YYYY-MM-DD HH24:MI:SS'),
+		MODIFY_NAME=#{modeifyName}
+		where id=#{id}
+	</update>
+	<delete id="deleteReceivableDetails">
+		delete from PAYABLE_BILL_DETAIL where id in
+		<foreach collection="ids" index="index" item="item" open="(" separator="," close=")">
+			#{item}
+		</foreach>
+	</delete>
+	<insert id="insertReceivableDetails" parameterType="com.yhzn.model.finance.PayableDetailsModel">
+		insert into PAYABLE_BILL_DETAIL
+		(
+		ID,
+		PAIABLE_ID,
+		CONTRACT_NO,
+		DETAIL_MONEY,
+		DETAIL_REMARK,
+		UNPAID_MONEY,
+		RECEPIT_MONEY,
+		INSERT_DATE,
+		INSERT_NAME,
+		DELETE_FLAG,
+		JOIN_DATE,
+		NEXT_DATE
+		)
+		values
+		(
+		#{id},
+		#{financeId},
+		#{contractNo},
+		#{detailMoney},
+		#{detailRemark},
+		#{unPaydMoney},
+		#{recepitMoney},
+		to_date(#{insertDate}, 'YYYY-MM-DD HH24:MI:SS'),
+		#{insertName},
+		0,
+		to_date(#{joinDate},'YYYY-MM-DD HH24:MI:SS'),
+		to_date(#{nextDate},'YYYY-MM-DD HH24:MI:SS')
+		)
+	</insert>
+	<select id="queryContractById" resultType="com.yhzn.model.finance.PayableModel">
+		select ID id,
+		COMPANY company,
+		CHARGE_MAN chargeMan,
+		CHARGE_TEL
+		chargeTel,
+		FINANCE_MAN financeMan,
+		FINANCE_TEL financeTel,
+		MONEY money,
+		REMARK
+		remark,
+		to_char(INSERT_DATE,'YYYY-MM-DD') insertDate
+		from PAYABLE_BILL where id=#{id}
+	</select>
+	<update id="updateFinance" parameterType="com.yhzn.model.finance.PayableModel">
+		update PAYABLE_BILL set
+		COMPANY =#{company},
+		CHARGE_MAN=#{ chargeMan},
+		CHARGE_TEL=#{chargeTel},
+		FINANCE_MAN =#{financeMan},
+		FINANCE_TEL=#{financeTel},
+		MONEY =#{money},
+		REMARK =#{remark},
+		MODIFY_DATE=to_date(#{modifyDate}, 'YYYY-MM-DD HH24:MI:SS'),
+		MODIFY_NAME=#{modifyName}
+		where id=#{id}
+	</update>
+	<select id="queryDetailsIds" resultType="java.lang.String">
+		select ID from PAYABLE_BILL_DETAIL where PAIABLE_ID=#{detailId}
+	</select>
+	<delete id="deleteDetailsById">
+		delete from PAYABLE_BILL_DETAIL where id =#{detailId}
+	</delete>
+	<delete id="deleteReceivable">
+		delete from PAYABLE_BILL where id =#{id}
+	</delete>
+	<update id="updateReceivableMoney">
+		update PAYABLE_BILL set MONEY=#{count} where id=#{financeId}
+	</update>
+	<select id="queryCompanyByPayableId" resultType="java.lang.String">
+		SELECT company from PAYABLE_BILL where id=#{payableId}
+	</select>
+	<!-- 详情实际收款总金额 -->
+	<select id="queryrecepitMoney" resultType="java.lang.Integer">
+		select nvl(SUM(RECEPIT_MONEY),0) from PAYABLE_BILL_DETAIL WHERE PAIABLE_ID=#{financeId}
+	</select>
+	<!-- 详情结存收款总金额 -->
+	<select id="queryunpaidMoney" resultType="java.lang.Integer">
+		select nvl(sum(UNPAID_MONEY),0) from PAYABLE_BILL_DETAIL WHERE PAIABLE_ID=#{financeId} and INSERT_DATE in(select max(a.insert_date) from PAYABLE_BILL_DETAIL a GROUP BY a.CONTRACT_NO)
+
+	</select>
+	
+	<select id="queryLastId" resultMap="ResultId">
+		SELECT
+		id
+		FROM
+		PAYABLE_BILL_DETAIL
+		WHERE
+		PAIABLE_ID=#{id}
+		AND INSERT_DATE IN ( SELECT max( a.insert_date ) FROM PAYABLE_BILL_DETAIL a GROUP BY a.CONTRACT_NO )
+	</select>
+	
+	<resultMap id="ResultId" type="java.lang.String" >
+        <result column="id" property="id" jdbcType="VARCHAR" />
+ </resultMap>
+</mapper>

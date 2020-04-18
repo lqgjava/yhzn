@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yhzn.dao.security.UserDao">
+<resultMap id="BaseResultMap" type="com.yhzn.model.security.User"></resultMap>
+  
+  <sql id="Base_Column_List">
+    ID, PERSON_ID, ROLE_ID, USER_NAME,TRUE_NAME,ROLE_NAME,DEPT,REMARK,PASSWORD
+  </sql>
+  
+   <select id="findUserByUserName" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select 
+    	<include refid="Base_Column_List"/>
+    from SYS_USER
+    where USER_NAME = #{userName} and DELETE_FLAG = '0'
+  </select>
+  
+   <select id="checkUser" parameterType="map" resultMap="BaseResultMap">
+    select 
+    	<include refid="Base_Column_List"/>
+    from SYS_USER
+    where USER_NAME = #{userName}
+        and PASSWORD =#{password}
+        and DELETE_FLAG = '0'
+  </select>
+  
+  <select id="findUserById" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select 
+    	<include refid="Base_Column_List" />
+    from SYS_USER
+    where id = #{id,jdbcType=VARCHAR}
+    and DELETE_FLAG='0'
+  </select>
+  
+  <update id="deleteUserById" parameterType="java.lang.String">
+    update  SYS_USER set DELETE_FLAG ='1'  where ID = #{id,jdbcType=VARCHAR}
+  </update>
+  
+ <insert id="saveUserInfo" parameterType="com.yhzn.model.security.User">
+    insert into SYS_USER
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+        ID,
+        PERSON_ID,
+        ROLE_ID,
+        USER_NAME,
+        PASSWORD,
+        TRUE_NAME,
+        ROLE_NAME,
+        DEPT,
+        REMARK,
+        DELETE_FLAG,
+        CREATE_NAME,
+        CREATE_DATE
+       
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+        #{id,jdbcType=VARCHAR},
+        #{personId,jdbcType=VARCHAR},
+        #{roleId,jdbcType=VARCHAR},
+        #{userName,jdbcType=VARCHAR},
+        #{password,jdbcType=VARCHAR},
+        #{trueName,jdbcType=VARCHAR},
+        #{roleName,jdbcType=VARCHAR},
+        #{dept,jdbcType=VARCHAR},
+        #{remark,jdbcType=VARCHAR},
+        '0',
+        #{createName,jdbcType=VARCHAR},
+        sysdate
+    </trim>
+  </insert>
+
+    <update id="updateUserInfo" parameterType="com.yhzn.model.security.User">
+    update SYS_USER
+    <set>
+      <if test="userName != null">
+        USER_NAME = #{userName,jdbcType=VARCHAR},
+      </if>
+      <if test="password != null">
+        PASSWORD = #{password,jdbcType=VARCHAR},
+      </if>
+      <if test="trueName != null">
+        TRUE_NAME = #{trueName,jdbcType=VARCHAR},
+      </if>
+      <if test="remark != null">
+        REMARK = #{remark,jdbcType=VARCHAR},
+      </if>
+      <if test="roleId != null">
+        ROLE_ID = #{roleId,jdbcType=VARCHAR},
+      </if>
+       <if test="roleName != null">
+        ROLE_NAME = #{roleName,jdbcType=VARCHAR},
+      </if>
+      <if test="modifyName != null">
+       MODIFY_NAME = #{modifyName,jdbcType=VARCHAR},
+      </if>
+       MODIFY_DATE=sysdate
+    </set>
+    where ID = #{id,jdbcType=VARCHAR}
+  </update> 
+  
+  <update id="updateByPrimaryKey" parameterType="com.yhzn.model.security.User">
+    update SYS_USER set  
+      USERNAME = #{username,jdbcType=VARCHAR},
+      <if test="password != null and password != ''">
+      PASSWORD = #{password,jdbcType=VARCHAR},
+      </if>
+      REMARK = #{remark,jdbcType=VARCHAR},
+      MODIFY_NAME = #{modifyName,jdbcType=VARCHAR},
+      MODIFY_DATE = sysdate
+    where ID = #{id,jdbcType=CHAR}
+  </update>
+	
+	<select id="querySysUserList" parameterType="map" resultType="com.yhzn.model.security.User">
+    select
+       <include refid="Base_Column_List"/>,
+       to_char(CREATE_DATE,'yyyy/mm/dd') as createDateStr
+    from SYS_USER
+    where 1 = 1 
+    and DELETE_FLAG='0'
+     <if test="userName != null and userName != ''">
+        and USER_NAME like '%${userName}%'
+      </if>
+      <if test="trueName != null and trueName != ''">
+        and TRUE_NAME like '%${trueName}%'
+      </if>
+      <if test="dept != null and dept != ''">
+        and DEPT like '%${dept}%'
+      </if>
+     <if test="beginDate != null and beginDate != ''">
+         and CREATE_DATE<![CDATA[>=]]>to_date(#{beginDate},'yyyy-mm-dd')
+      </if>
+      <if test="endDate != null and endDate != ''">
+         and CREATE_DATE <![CDATA[<]]>to_date(#{endDate},'yyyy-mm-dd')
+      </if>
+  </select>
+
+	<!-- 根据用户名字查询相应权限 -->
+	<select id="findPermissionsByUserName" parameterType="string"
+		resultType="string">
+		SELECT p.perms
+		FROM SYS_USER u,SYS_ROLE r,SYS_USER_ROLE ur,PERMISSION
+		p,SYS_ROLE_PERMIS rp
+		WHERE u.USER_NAME = #{userName}
+		AND u.id = ur.USER_ID
+		AND ur.ROLE_ID = r.ID
+		AND r.ID = rp.ROLE_ID
+		AND rp.MODULE_ID = p.ID and p.perms is not null
+	</select>
+    <!-- 根据用户名字查询相应角色 -->
+	<select id="findRolesByUserName" parameterType="string"
+		resultType="string">
+			SELECT r.role_code
+		FROM SYS_USER u,SYS_ROLE r,SYS_USER_ROLE ur
+		WHERE u.USER_NAME =#{userName}
+		AND u.ID = ur.USER_ID
+		AND ur.ROLE_ID = r.ID
+	</select>
+	<!-- 用户与角色进行关联 -->
+	<insert id="insertUserRole" parameterType="com.yhzn.model.security.UserRoleModule">
+	insert into SYS_USER_ROLE values (#{id},#{userId},#{roleId})
+	</insert>
+	<!-- 更改用户关联 -->
+	<update id="updateUserRole">
+	update SYS_USER_ROLE set role_id=#{roleId} where user_id=#{id}
+	</update>
+	<select id="countRole" resultType="integer">
+	select count(id) from SYS_USER_ROLE where USER_ID=#{userId}
+	</select>
+</mapper>

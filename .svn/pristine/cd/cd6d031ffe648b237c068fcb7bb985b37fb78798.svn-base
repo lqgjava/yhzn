@@ -1,0 +1,262 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yhzn.dao.projmanage.ScheduleDao">
+
+	<sql id="Base_Column_List">
+		ID,PROJ_NO,PROJ_NAME,PROJ_TYPE,CONTACTS,PHONE,UNIT_NAME,PROJ_ADDR,PROJ_TEL,IS_HIDE,
+		PROJ_UNIT_NAME,PROJ_STATUS,REMARK,PROJ_CONDITION,PROJ_DUTY,BUILDER,PROJ_CONTACTS,PROJ_POSITION,PROJ_ADDRESS,create_Name
+	</sql>
+	<select id="queryEarlyList" parameterType="com.yhzn.model.projmanage.Schedule" resultType="com.yhzn.model.projmanage.Schedule">
+		select
+		<include refid="Base_Column_List" />
+		,
+		to_char(START_DATE,'yyyy-mm-dd') as startDateStr,
+		to_char(END_DATE,'yyyy-mm-dd') as endDateStr,
+		to_char(CREATE_DATE,'yyyy-mm-dd') as createDateStr,
+		 (select name from PERSON_INFO where id=PROJ_DUTY) projDutyTrueName		
+		from PROJECT
+		where 1 = 1 
+		and DELETE_FLAG='0' and PROJ_STATUS =#{projStatus}  
+		<if test="unitName != null and unitName != ''">
+			and UNIT_NAME like '%${unitName}%'
+		</if>
+		<if test="contacts != null and contacts != ''">
+			and CONTACTS like '%${contacts}%'
+		</if>
+		<if test="projName != null and projName != ''">
+			and PROJ_NAME like '%${projName}%'
+		</if>
+		<if test="isHide!=null and isHide!=''">
+		and IS_HIDE =#{isHide,jdbcType=VARCHAR}
+		</if>
+		ORDER BY CREATE_DATE DESC
+	</select>
+
+	<select id="queryScheduleList" parameterType="map" resultType="com.yhzn.model.projmanage.Schedule">
+		select
+		<include refid="Base_Column_List" />
+		,PROJ_ZHUANGTAI projZhuangtai,
+		to_char(START_DATE,'yyyy-mm-dd') as startDateStr,
+		to_char(END_DATE,'yyyy-mm-dd') as endDateStr,
+		to_char(CREATE_DATE,'yyyy-mm-dd') as createDateStr,
+		(select name from PERSON_INFO where id=PROJ_DUTY) projDutyTrueName	
+		from PROJECT
+		where 1 = 1
+		and DELETE_FLAG='0'
+		<if test="projName != null and projName != ''">
+			and PROJ_NAME like '%${projName}%'
+		</if>
+		<if test="projNo != null and projNo != ''">
+			and PROJ_NO like '%${projNo}%'
+		</if>
+		<if test="projStatus != null and projStatus != ''">
+			and PROJ_STATUS like '%${projStatus}%'
+		</if>
+		<if test="beginDate != null and beginDate != ''">
+			and START_DATE<![CDATA[>=]]>to_date(#{beginDate},'yyyy-mm-dd')
+		</if>
+		<if test="endDate != null and endDate != ''">
+			and START_DATE <![CDATA[<]]>to_date(#{endDate},'yyyy-mm-dd')
+		</if>
+		<if test="fromDate != null and fromDate != ''">
+			and END_DATE<![CDATA[>=]]>to_date(#{fromDate},'yyyy-mm-dd')
+		</if>
+		<if test="toDate != null and toDate != ''">
+			and END_DATE <![CDATA[<]]>to_date(#{toDate},'yyyy-mm-dd')
+		</if>
+		<if test="unitName != null and unitName != ''">
+			and UNIT_NAME like #{unitName}
+		</if>
+		<if test="receivable!=null and receivable!=''">
+			and PROJ_STATUS in ('1','2')
+		</if>
+		<if test="receivable==null and receivable==''">
+			and PROJ_STATUS=#{projStatus}
+		</if>
+		
+		ORDER BY CREATE_DATE DESC
+	</select>
+
+	<update id="deleteProjectById" parameterType="java.lang.String">
+		update PROJECT set DELETE_FLAG='1'
+		where ID = #{id,jdbcType=VARCHAR}
+	</update>
+
+	<insert id="insertProjectInfo" parameterType="com.yhzn.model.projmanage.Schedule">
+		insert into PROJECT (
+		ID,
+		PROJ_NO,
+		PROJ_NAME,
+		PROJ_TYPE,
+		CONTACTS,
+		PHONE,
+		UNIT_NAME,
+		PROJ_ADDR,
+		PROJ_UNIT_NAME,
+		PROJ_STATUS,
+		PROJ_CONDITION,
+		PROJ_DUTY,
+		PROJ_CONTACTS,
+		PROJ_POSITION,
+		<if test="startDateStr !=null and startDateStr != ''">
+			START_DATE,
+		</if>
+		<if test="endDateStr !=null and endDateStr != ''">
+			END_DATE,
+		</if>
+		BUILDER,
+		REMARK,
+		DELETE_FLAG,
+		CREATE_DATE,
+		CREATE_NAME,
+		PROJ_TEL,
+		PROJ_ADDRESS,
+		IS_HIDE
+		)values (
+		#{id,jdbcType=VARCHAR},
+		#{projNo,jdbcType=VARCHAR},
+		#{projName,jdbcType=VARCHAR},
+		#{projType,jdbcType=VARCHAR},
+		#{contacts,jdbcType=VARCHAR},
+		#{phone,jdbcType=VARCHAR},
+		#{unitName,jdbcType=VARCHAR},
+		#{projAddr,jdbcType=VARCHAR},
+		#{projUnitName,jdbcType=VARCHAR},
+		#{projStatus,jdbcType=VARCHAR},
+		#{projCondition,jdbcType=VARCHAR},
+		#{projDuty,jdbcType=VARCHAR},
+		#{projContacts,jdbcType=VARCHAR},
+		#{projPosition,jdbcType=VARCHAR},
+		<if test="startDateStr !=null and startDateStr != ''">
+			to_date(#{startDateStr},'yyyy-MM-dd'),
+		</if>
+		<if test="endDateStr !=null and endDateStr != ''">
+			to_date(#{endDateStr},'yyyy-MM-dd'),
+		</if>
+		#{builder,jdbcType=VARCHAR},
+		#{remark,jdbcType=VARCHAR},
+		'0', 
+		    <![CDATA[sysdate]]>,
+		#{createName,jdbcType=VARCHAR},
+		#{projTel,jdbcType=VARCHAR},
+		#{projAddress,jdbcType=VARCHAR},
+		'0'
+		)
+	</insert>
+
+	<update id="updateProjectInfo" parameterType="com.yhzn.model.projmanage.Schedule">
+		update PROJECT set
+		<!-- PROJ_NAME= #{projName,jdbcType=VARCHAR},
+		PROJ_TYPE= #{projType,jdbcType=VARCHAR},
+		CONTACTS= #{contacts,jdbcType=VARCHAR},
+		PHONE= #{phone,jdbcType=VARCHAR}, -->
+		UNIT_NAME= #{unitName,jdbcType=VARCHAR},
+		PROJ_ADDR= #{projAddr,jdbcType=VARCHAR},
+		PROJ_UNIT_NAME= #{projUnitName,jdbcType=VARCHAR},
+		PROJ_CONDITION= #{projCondition,jdbcType=VARCHAR},
+		PROJ_DUTY= #{projDuty,jdbcType=VARCHAR},
+		PROJ_CONTACTS= #{projContacts,jdbcType=VARCHAR},
+		PROJ_POSITION= #{projPosition,jdbcType=VARCHAR},
+		<if test="startDateStr !=null and startDateStr != ''">
+			START_DATE = to_date(#{startDateStr},'yyyy-MM-dd'),
+		</if>
+		<if test="endDateStr !=null and endDateStr != ''">
+			END_DATE = to_date(#{endDateStr},'yyyy-MM-dd'),
+		</if>
+		BUILDER= #{builder,jdbcType=VARCHAR},
+		REMARK= #{remark,jdbcType=VARCHAR},
+		MODIFY_NAME = #{modifyName,jdbcType=VARCHAR},
+		MODIFY_DATE = <![CDATA[sysdate]]>
+		<if test="projTel !=null and projTel != ''">
+			,PROJ_TEL=#{projTel}
+		</if>
+		<if test="projAddress !=null and projAddress != ''">
+			,PROJ_ADDRESS=#{projAddress}
+		</if>
+		where ID = #{id,jdbcType=VARCHAR}
+	</update>
+	<select id="queryScheduleById" resultType="com.yhzn.model.projmanage.Schedule">
+		select
+		<include refid="Base_Column_List" />
+		,
+		to_char(START_DATE,'yyyy-mm-dd') as startDateStr,
+		
+		to_char(END_DATE,'yyyy-mm-dd') as endDateStr,
+		to_char(CREATE_DATE,'yyyy-mm-dd') as createDateStr
+		from PROJECT
+		where
+		DELETE_FLAG='0' and id=#{id}
+	</select>
+	<update id="deleteProjectByIds">
+		update project set DELETE_FLAG='1' where id in
+		<foreach collection="ids" index="index" item="item" open="(" separator="," close=")">
+			#{item}
+		</foreach>
+
+	</update>
+	<select id="linkdetails" resultType="com.yhzn.model.projmanage.ProjectLinkModel">
+		SELECT id,GT_MEN gtMen,GT_CODE gtCode,PROJECT_ID projectId,CUSATOMER
+		custaomer,GT_CONTEXT gtContext,gt_address gtAddress,TO_CHAR(GT_TIME,'yyyy-MM-dd') gtTime,status
+		FROM PROJECT_LINK where PROJECT_ID=#{id} order by status
+	</select>
+	<insert id="insertProjectLinkInfo" parameterType="com.yhzn.model.projmanage.ProjectLinkModel">
+		INSERT into PROJECT_LINK (
+		ID,
+		<if test="gtTime !=null and gtTime != ''">
+			GT_TIME,
+		</if>
+		PROJECT_ID,
+		GT_MEN,
+		CUSATOMER,
+		GT_CODE,
+		GT_ADDRESS,
+		GT_CONTEXT,
+		INSERT_DATE,
+		INSERT_NAME,
+		STATUS
+		) values(
+		#{id,jdbcType=VARCHAR},
+		<if test="gtTime !=null and gtTime != ''">
+			to_date(#{gtTime,jdbcType=VARCHAR}, 'YYYY-MM-DD HH24:MI:SS'),
+		</if>
+		#{projectId,jdbcType=VARCHAR},
+		#{gtMen,jdbcType=VARCHAR},
+		#{custaomer,jdbcType=VARCHAR},
+		#{gtCode,jdbcType=VARCHAR},
+		#{gtAddress,jdbcType=VARCHAR},
+		#{gtContext,jdbcType=VARCHAR},
+		sysdate,
+		#{insertName,jdbcType=VARCHAR},
+		#{status,jdbcType=NUMERIC}
+		)
+	</insert>
+	<update id="editLinkInfo" parameterType="com.yhzn.model.projmanage.ProjectLinkModel">
+		update PROJECT_LINK set
+		<if test="gtTime !=null and gtTime != ''">
+			GT_TIME=TO_DATE(#{gtTime,jdbcType=VARCHAR}, 'yyyy-MM-dd hh24:mi:ss' ),
+		</if>
+		PROJECT_ID=#{projectId,jdbcType=VARCHAR},
+		GT_MEN=#{gtMen,jdbcType=VARCHAR},
+		CUSATOMER= #{custaomer,jdbcType=VARCHAR},
+		GT_CODE=#{gtCode,jdbcType=VARCHAR},
+		GT_ADDRESS=#{gtAddress,jdbcType=VARCHAR},
+		GT_CONTEXT= #{ gtContext,jdbcType=VARCHAR}
+		where ID=#{id,jdbcType=VARCHAR}
+	</update>
+	<delete id="deletelinkById" parameterType="java.lang.String">
+		delete from PROJECT_LINK where id= #{id,jdbcType=VARCHAR}
+	</delete>
+	<update id="updateProjectStatusById">
+		update project set PROJ_STATUS=#{status} where id=#{id}
+	</update>
+	<!-- 隐藏项目 -->
+	<update id="hideProjectByIds">
+		update project set IS_HIDE='1' where id in
+		<foreach collection="ids" index="index" item="item" open="(" separator="," close=")">
+			#{item}
+		</foreach>
+	</update>
+	<update id="updateStatus">
+		update project set PROJ_ZHUANGTAI=#{zt} where id=#{id}
+	</update>
+</mapper>

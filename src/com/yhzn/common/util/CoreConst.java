@@ -1,0 +1,13 @@
+package com.yhzn.common.util;
+
+public class CoreConst {
+    public static final Integer  SUCCESS_CODE           = 200;
+    public static final Integer  FAIL_CODE               = 500;
+    //菜单状态
+    public static final Integer  STATUS_VALID            = 1;
+    public static final Integer  STATUS_INVALID          = 2;
+    public static Integer TOP_MENU_ID         = 0;
+    public static final String IS_DEL = "1";
+    public static final String NO_DEL = "0";
+    public static String TOP_MENU_NAME       = "顶层菜单";
+}

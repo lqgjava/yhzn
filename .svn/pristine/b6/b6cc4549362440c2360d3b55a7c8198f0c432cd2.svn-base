@@ -1,0 +1,84 @@
+
+ul{margin: 0;padding: 0;}
+li{margin: 0;padding: 0;list-style-type: none;}
+
+a {outline: none;star:expression(this.onFocus=this.blur());}
+img{ border:0;}
+a:hover { font-size: 12px; color:#000; text-decoration: none}
+a:link { font-size: 12px; color: #000; text-decoration: none}
+a:visited { font-size: 12px;  color: #000; text-decoration: none}
+a:active{ font-size: 12px;  color: #000; text-decoration: none}
+a:hover.header { font-size: 12px; color:#fff; text-decoration: none}
+a:link.header { font-size: 12px; color: #fff; text-decoration: none}
+a:visited.header { font-size: 12px;  color: #fff; text-decoration: none}
+a:active.header{ font-size: 12px;  color: #fff; text-decoration: none}
+
+a:hover.other { font-size: 12px;font-weight:bold; color: #00F; text-decoration: underline}
+a:link.other { font-size: 12px; color: #00F; text-decoration: none}
+a:visited.other { font-size: 12px;  color: #00F; text-decoration: none}
+a:active.other { font-size: 12px;  color: #00F; text-decoration: none}
+.fontlabel{ font-size:14px; font-weight:bold;}
+.fontContent{ font-size:12px;}
+
+
+.location{ font-weight:bold;}
+.position{ margin-top:5px;}
+.bar{ border:1px solid #93AFC4; background-color:#EFF3F8;}
+
+.button_blue{ border:1px solid #397FBA; padding:3px 5px; background-color:#468CC8; color:#FFFFFF; cursor: pointer;}/*2015-09-21*/
+.button_green{ border:1px solid #60B760; padding:3px 5px; background-color:#60B760; color:#FFFFFF; cursor: pointer;}/*2015-09-21*/
+.button_orange{ border:1px solid #ECA142; padding:3px 5px; background-color:#FF9C00; color:#FFFFFF; cursor: pointer;}/*2015-09-21*/
+.button_disabled{ border:1px solid #6F6F6F; padding:3px 5px; background-color:#6F6F6F; color:#FFFFFF; cursor: pointer;}/*2015-09-21*/
+.button_back{ border:1px solid #397FBA; padding:3px 5px; background-color:#468CC8; color:#FFFFFF; cursor: pointer;}/*2015-09-21*/
+
+
+.input_txt{  
+	color:#000;
+	width:80%; 
+	border-bottom:1px #ccc; /* 下划线效果 */ 
+	border-top:0px;  
+	border-left:0px;  
+	border-right:0px;  
+	background-color:transparent; /* 背景色透明 */  
+}
+.input_no{  
+	color:#000;
+	width:80%; 
+	border-bottom:0px solid #ccc; /* 无边框效果 */  
+	border-top:0px;  
+	border-left:0px;  
+	border-right:0px;  
+	background-color:transparent; /* 背景色透明 */  
+}
+.input_textarea{
+	color:#000;
+	border-top:1px solid #ccc;  
+	border-left:1px solid #ccc; 
+	border-right:1px solid #ccc;  
+	border-bottom:1px solid #ccc; /* 下划线效果 */ 
+	width:600px; 
+	height:120px; 
+	margin-left:0px; 
+	word-warp:break-word;
+	overflow-y:auto;
+	background-color:transparent; /* 背景色透明 */  
+}
+.input_reprot{  
+	color:#000;
+	width:100%;
+	font-size:18px;
+	text-align:center;
+	border-bottom:0px;
+	border-top:0px;  
+	border-left:0px;  
+	border-right:0px;  
+	background-color:transparent; /* 背景色透明 */  
+}
+
+
+
+	
+.textarea_reprot{border: solid 1px #ccc; width:98%; font-size:14px; height:100px; margin-left:10px; margin-top:5px; margin-bottom:5px; overflow-y:auto;}
+.textarea{border: solid 1px #80c0e7; width:95%; height:120px; margin-left:30px; overflow-y:auto;}
+
+.toolsMenu{margin-left:30px;}
