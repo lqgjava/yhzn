@@ -61,7 +61,7 @@ public class SalesDetailsController {
 			@RequestMapping(value = "/salesDetailsPage", method = RequestMethod.GET)
 			public String SalesDetails(String customerId, Model model) {
 				model.addAttribute("customerId", customerId);
-				return "/financemanage/accounts/salesContract";
+				return "/financemanage/accounts/salesdetails";
 			}
 			
 			/**
@@ -105,18 +105,16 @@ public class SalesDetailsController {
 				//获取登录人信息 
 				User user= (User) request.getSession().getAttribute("user");
 		        //日志类型，操作人，操作内容，操作人IP,操作方法
-				sysLogService.insertSysLog("查询",user.getTrueName(),"查询人员信息列表 ",user.getLoginIp(),"/SalesDetails/querySalesDetailsList");
+				sysLogService.insertSysLog("查询",user.getTrueName(),"查询人员信息列表 ",user.getLoginIp(),"/salesDetails/querySalesDetailsList");
 
 				
 				int page = Integer.parseInt(request.getParameter("page"));
 				int rows = Integer.parseInt(request.getParameter("rows"));
 	            //可能有问题			
 				String contractNo = request.getParameter("contractNo");//合同编号
-				String contractName = request.getParameter("contractName");//部门
 				
 				Map<String,Object> parameter = new HashMap<String,Object>();
 					parameter.put("contractNo", contractNo);
-					parameter.put("contractName",contractName);
 
 				PageBounds bounds = new PageBounds(page , rows );
 				List<SalesDetails> list = SalesDetailsService.querySalesDetailsList(bounds, parameter);

@@ -46,4 +46,6 @@ public interface SalesContractDao{
 	 * @return
 	 */
 	SalesContract selFinancialSalesContractById(String id);
+	
+	List<SalesContract> getSalesContractBycontractNo(String contractNo);
 }

@@ -23,9 +23,11 @@
 		<result column="SIGN_DATE" property="signDate" jdbcType="DATE" />
 	</resultMap>
 	<sql id="Base_Column_List">
-		ID, CUSTOMER_ID, CUSTOMER_NAME, MONEY, ACCEPT_MONEY, REMARK, CREATE_NAME,
+		ID, CUSTOMER_ID, CUSTOMER_NAME, MONEY, ACCEPT_MONEY,
+		REMARK, CREATE_NAME,
 		CREATE_DATE,
-		MODIFY_NAME, MODIFY_DATE, DELETE_FLAG, REV1, REV2, REV3, CONTRACT_NAME,
+		MODIFY_NAME, MODIFY_DATE, DELETE_FLAG,
+		REV1, REV2, REV3, CONTRACT_NAME,
 		CONTRACT_NO,
 		SIGN_DATE
 	</sql>
@@ -35,53 +37,58 @@
 		select
 		<include refid="Base_Column_List" />
 		,
-		(select c.NAME from CUSTOMER_INFO c where c.ID = CUSTOMER_ID) customerName
-		from FINANCIAL_SALES_CONTRACT
+		(select c.NAME from CUSTOMER_INFO c where c.ID = CUSTOMER_ID)
+		customerName
+		from FINANCE_SALES_CONTRACT     
 		where
 		1 = 1
 		and DELETE_FLAG='0'
-		<if test="name != null and name != ''">
-			and CONTRACTNO like '%${contractNo}%'
-		</if>
-		<if test="dept != null and dept != ''">
-			and CONTRACTNAME like '%${ContractName}%'
-		</if>
-		<!-- <if test="beginDate != null and beginDate != ''"> and ENTRY_DATE<![CDATA[>=]]>to_date(#{beginDate},'yyyy-mm-dd 
-			hh24:mi:ss') </if> <if test="endDate != null and endDate != ''"> and ENTRY_DATE 
-			<![CDATA[<]]>to_date(#{endDate},'yyyy-mm-dd hh24:mi:ss') </if> -->
-		order by CREATE_DATE desc
+		order by CREATE_DATE desc 
+	</select>
+	
+	<select id="getSalesContractBycontractNo" resultType="com.yhzn.model.finance.SalesContract">
+		select r.* from FINANCE_SALES_DETAIL f1,FINANCE_SALES_CONTRACT f2 where f2.ID=f1.ACCEPT_ID and f1.CONTRACT_NO=#{contractNo}
 	</select>
 
 	<select id="selFinancialSalesContractById" resultMap="BaseResultMap"
 		parameterType="java.lang.String">
 		select
 		<include refid="Base_Column_List" />
-		from FINANCIAL_SALES_CONTRACT
+		from FINANCE_SALES_CONTRACT
 		where ID = #{id,jdbcType=VARCHAR}
 	</select>
 	<delete id="delFinancialSalesContractById" parameterType="java.lang.String">
-		delete from FINANCIAL_SALES_CONTRACT
+		delete
+		from FINANCE_SALES_CONTRACT
 		where ID = #{id,jdbcType=VARCHAR}
 	</delete>
 	<insert id="insert" parameterType="com.yhzn.model.finance.SalesContract">
-		insert into FINANCIAL_SALES_CONTRACT (ID, CUSTOMER_ID, CUSTOMER_NAME,
-		MONEY, ACCEPT_MONEY, REMARK,
+		insert into
+		FINANCE_SALES_CONTRACT (ID, CUSTOMER_ID, CUSTOMER_NAME,
+		MONEY,
+		ACCEPT_MONEY, REMARK,
 		CREATE_NAME, CREATE_DATE, MODIFY_NAME,
 		MODIFY_DATE, DELETE_FLAG, REV1,
 		REV2, REV3, CONTRACT_NAME,
-		CONTRACT_NO, SIGN_DATE)
-		values (#{id,jdbcType=VARCHAR}, #{customerId,jdbcType=VARCHAR},
+		CONTRACT_NO,
+		SIGN_DATE)
+		values (#{id,jdbcType=VARCHAR},
+		#{customerId,jdbcType=VARCHAR},
 		#{customerName,jdbcType=VARCHAR},
-		#{money,jdbcType=DECIMAL}, #{acceptMoney,jdbcType=VARCHAR}, #{remark,jdbcType=VARCHAR},
-		#{createName,jdbcType=VARCHAR}, #{createDate,jdbcType=DATE},
+		#{money,jdbcType=DECIMAL}, #{acceptMoney,jdbcType=VARCHAR},
+		#{remark,jdbcType=VARCHAR},
+		#{createName,jdbcType=VARCHAR},
+		#{createDate,jdbcType=DATE},
 		#{modifyName,jdbcType=VARCHAR},
-		#{modifyDate,jdbcType=DATE}, #{deleteFlag,jdbcType=DECIMAL}, #{rev1,jdbcType=VARCHAR},
-		#{rev2,jdbcType=VARCHAR}, #{rev3,jdbcType=VARCHAR},
+		#{modifyDate,jdbcType=DATE}, #{deleteFlag,jdbcType=DECIMAL},
+		#{rev1,jdbcType=VARCHAR},
+		#{rev2,jdbcType=VARCHAR},
+		#{rev3,jdbcType=VARCHAR},
 		#{contractName,jdbcType=VARCHAR},
 		#{contractNo,jdbcType=VARCHAR}, #{signDate,jdbcType=DATE})
 	</insert>
 	<insert id="addFinancialSalesContract" parameterType="com.yhzn.model.finance.SalesContract">
-		insert into FINANCIAL_SALES_CONTRACT
+		insert into FINANCE_SALES_CONTRACT
 		<trim prefix="(" suffix=")" suffixOverrides=",">
 			<if test="id != null">
 				ID,
@@ -190,7 +197,7 @@
 		</trim>
 	</insert>
 	<update id="editFinancialSalesContract" parameterType="com.yhzn.model.finance.SalesContract">
-		update FINANCIAL_SALES_CONTRACT
+		update FINANCE_SALES_CONTRACT
 		<set>
 			<if test="customerId != null">
 				CUSTOMER_ID = #{customerId,jdbcType=VARCHAR},
@@ -244,22 +251,33 @@
 		where ID = #{id,jdbcType=VARCHAR}
 	</update>
 	<update id="updateByPrimaryKey" parameterType="com.yhzn.model.finance.SalesContract">
-		update FINANCIAL_SALES_CONTRACT
-		set CUSTOMER_ID = #{customerId,jdbcType=VARCHAR},
-		CUSTOMER_NAME = #{customerName,jdbcType=VARCHAR},
+		update
+		FINANCE_SALES_CONTRACT
+		set CUSTOMER_ID =
+		#{customerId,jdbcType=VARCHAR},
+		CUSTOMER_NAME =
+		#{customerName,jdbcType=VARCHAR},
 		MONEY = #{money,jdbcType=DECIMAL},
 		ACCEPT_MONEY = #{acceptMoney,jdbcType=VARCHAR},
-		REMARK = #{remark,jdbcType=VARCHAR},
-		CREATE_NAME = #{createName,jdbcType=VARCHAR},
-		CREATE_DATE = #{createDate,jdbcType=DATE},
-		MODIFY_NAME = #{modifyName,jdbcType=VARCHAR},
-		MODIFY_DATE = #{modifyDate,jdbcType=DATE},
-		DELETE_FLAG = #{deleteFlag,jdbcType=DECIMAL},
+		REMARK =
+		#{remark,jdbcType=VARCHAR},
+		CREATE_NAME =
+		#{createName,jdbcType=VARCHAR},
+		CREATE_DATE =
+		#{createDate,jdbcType=DATE},
+		MODIFY_NAME =
+		#{modifyName,jdbcType=VARCHAR},
+		MODIFY_DATE =
+		#{modifyDate,jdbcType=DATE},
+		DELETE_FLAG =
+		#{deleteFlag,jdbcType=DECIMAL},
 		REV1 = #{rev1,jdbcType=VARCHAR},
-		REV2 = #{rev2,jdbcType=VARCHAR},
+		REV2 =
+		#{rev2,jdbcType=VARCHAR},
 		REV3 = #{rev3,jdbcType=VARCHAR},
 		CONTRACT_NAME = #{contractName,jdbcType=VARCHAR},
-		CONTRACT_NO = #{contractNo,jdbcType=VARCHAR},
+		CONTRACT_NO =
+		#{contractNo,jdbcType=VARCHAR},
 		SIGN_DATE = #{signDate,jdbcType=DATE}
 		where ID = #{id,jdbcType=VARCHAR}
 	</update>

@@ -39,7 +39,7 @@
 			and CONTRACTNO like '%${contractNo}%'
 		</if>
 		<if test="dept != null and dept != ''">
-			and CONTRACTNAME like '%${ContractName}%'
+			and CONTRACTNAME like '%${contractName}%'
 		</if>
 		<!-- <if test="beginDate != null and beginDate != ''">
 			and ENTRY_DATE<![CDATA[>=]]>to_date(#{beginDate},'yyyy-mm-dd

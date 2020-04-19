@@ -226,12 +226,12 @@
 							align : 'center',
 							width : '14%'
 						},
-						{
+						/* {
 							field : 'createName',
 							title : '创建人',
 							width : '9%',
 							align : 'center'
-						},
+						}, */
 						{
 							field : 'sign',
 							title : '签订时间',
@@ -248,7 +248,7 @@
 						{
 							field : 'remark',
 							title : '备注',
-							width : '26%',
+							width : '35%',
 							align : 'center'
 						} ] ],
 					toolbar : '#ReceGridToolbar',
@@ -323,14 +323,16 @@
 				});
 			}  */
 			
-			function linkForm(customerId) {
+			function linkForm(contractNo) {
 					// 创建窗口
-					var dialog = $("<div/>").dialog(
-							{
-								href : '${ctx}/salesDetails/salesDetailsPage?customerId='+customerId,
+					var content = "<iframe src = '${ctx}/salesDetails/salesDetailsPage?contractNo="+contractNo+"' width='100%' height='99%' frameborder='0' scrolling='no'></iframe>";
+					var dialog = $("<div style='width:100%;'/>").dialog(
+							{	
+								content:content,
+								/* href : '${ctx}/salesDetails/salesDetailsPage?customerId='+customerId, */
 								title :'销售合同详情',
 								height : '90%',
-								width : '100%',
+								width : '99%',
 								modal : true,
 								onClose : function() {
 									// 窗口关闭的同时销毁此窗口

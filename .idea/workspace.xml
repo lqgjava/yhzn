@@ -1,20 +1,51 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
-  <component name="GradleLocalSettings">
-    <option name="projectSyncType">
-      <map>
-        <entry key="$USER_HOME$/Desktop/SpringBlog-master" value="PREVIEW" />
-        <entry key="F:/java大佬的Sring Boot源码汇总/SpringBoot文件汇总/SpringBoot项目源码/大佬的Spring Boot博客系统开源源码/SpringBlog-master" value="PREVIEW" />
-        <entry key="F:/java大佬的Sring Boot源码汇总/SpringBoot文件汇总/慕课网老卫从零开始搭建springboot博客源码/x1hn1k/blog-blog" value="PREVIEW" />
-      </map>
-    </option>
+  <component name="ChangeListManager">
+    <list default="true" id="11024a0b-c591-4cd0-b5b6-c9e98e0334ca" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/yhzn.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.classpath" beforeDir="false" afterPath="$PROJECT_DIR$/.classpath" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.settings/com.genuitec.eclipse.migration.prefs" beforeDir="false" afterPath="$PROJECT_DIR$/.settings/com.genuitec.eclipse.migration.prefs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.settings/org.eclipse.core.resources.prefs" beforeDir="false" afterPath="$PROJECT_DIR$/.settings/org.eclipse.core.resources.prefs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.settings/org.eclipse.wst.common.project.facet.core.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.settings/org.eclipse.wst.common.project.facet.core.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/resource/mapper/customer/CustomerDao.xml" beforeDir="false" afterPath="$PROJECT_DIR$/resource/mapper/customer/CustomerDao.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/com/yhzn/common/util/CoreConst.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/yhzn/common/util/CoreConst.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/com/yhzn/dao/customer/CustomerDao.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/yhzn/dao/customer/CustomerDao.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/com/yhzn/service/customer/CustomerService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/yhzn/service/customer/CustomerService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/com/yhzn/service/impl/customer/CustomerServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/yhzn/service/impl/customer/CustomerServiceImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/com/yhzn/web/controller/customer/CustomerController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/yhzn/web/controller/customer/CustomerController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/com/yhzn/web/controller/finance/PayableController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/yhzn/web/controller/finance/PayableController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/web/WEB-INF/classes/com/yhzn/common/util/CoreConst.class" beforeDir="false" afterPath="$PROJECT_DIR$/web/WEB-INF/classes/com/yhzn/common/util/CoreConst.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/web/WEB-INF/classes/com/yhzn/dao/customer/CustomerDao.class" beforeDir="false" afterPath="$PROJECT_DIR$/web/WEB-INF/classes/com/yhzn/dao/customer/CustomerDao.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/web/WEB-INF/classes/com/yhzn/service/customer/CustomerService.class" beforeDir="false" afterPath="$PROJECT_DIR$/web/WEB-INF/classes/com/yhzn/service/customer/CustomerService.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/web/WEB-INF/classes/com/yhzn/service/impl/customer/CustomerServiceImpl.class" beforeDir="false" afterPath="$PROJECT_DIR$/web/WEB-INF/classes/com/yhzn/service/impl/customer/CustomerServiceImpl.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/web/WEB-INF/classes/com/yhzn/web/controller/customer/CustomerController.class" beforeDir="false" afterPath="$PROJECT_DIR$/web/WEB-INF/classes/com/yhzn/web/controller/customer/CustomerController.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/web/WEB-INF/classes/com/yhzn/web/controller/finance/PayableController.class" beforeDir="false" afterPath="$PROJECT_DIR$/web/WEB-INF/classes/com/yhzn/web/controller/finance/PayableController.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/web/WEB-INF/classes/mapper/customer/CustomerDao.xml" beforeDir="false" afterPath="$PROJECT_DIR$/web/WEB-INF/classes/mapper/customer/CustomerDao.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/web/pages/financemanage/payable/payabledetails.jsp" beforeDir="false" afterPath="$PROJECT_DIR$/web/pages/financemanage/payable/payabledetails.jsp" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
   <component name="ProjectId" id="1ahI82qkqBfYNQ8TzUQhx6nfSLj" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showExcludedFiles" value="true" />
+    <option name="showLibraryContents" value="true" />
+    <option name="showMembers" value="true" />
+  </component>
   <component name="PropertiesComponent">
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="aspect.path.notification.shown" value="true" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="node.js.detected.package.eslint" value="true" />
+    <property name="node.js.detected.package.tslint" value="true" />
+    <property name="node.js.path.for.package.eslint" value="project" />
+    <property name="node.js.path.for.package.tslint" value="project" />
+    <property name="node.js.selected.package.eslint" value="(autodetect)" />
+    <property name="node.js.selected.package.tslint" value="(autodetect)" />
     <property name="nodejs_interpreter_path.stuck_in_default_project" value="undefined stuck path" />
     <property name="nodejs_npm_path_reset_for_default_project" value="true" />
     <property name="settings.editor.selected.configurable" value="File.Encoding" />
@@ -43,10 +74,41 @@
       </method>
     </configuration>
   </component>
-  <component name="SvnConfiguration">
+  <component name="SvnConfiguration" cleanupOnStartRun="true">
     <configuration>C:\Users\lqg\AppData\Roaming\Subversion</configuration>
+    <supportedVersion>125</supportedVersion>
   </component>
-  <component name="VcsContentAnnotationSettings">
-    <option name="myLimit" value="2678400000" />
+  <component name="SvnFileUrlMappingImpl">
+    <option name="myMappingRoots">
+      <list>
+        <SvnCopyRootSimple>
+          <option name="myVcsRoot" value="F:\liany\liany_OA" />
+          <option name="myCopyRoot" value="F:\liany\liany_OA" />
+        </SvnCopyRootSimple>
+      </list>
+    </option>
+    <option name="myMoreRealMappingRoots">
+      <list>
+        <SvnCopyRootSimple>
+          <option name="myVcsRoot" value="F:\liany\liany_OA" />
+          <option name="myCopyRoot" value="F:\liany\liany_OA" />
+        </SvnCopyRootSimple>
+      </list>
+    </option>
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="11024a0b-c591-4cd0-b5b6-c9e98e0334ca" name="Default Changelist" comment="" />
+      <created>1587181235187</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1587181235187</updated>
+      <workItem from="1587181240606" duration="1212000" />
+      <workItem from="1587324898017" duration="813000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="1" />
   </component>
 </project>

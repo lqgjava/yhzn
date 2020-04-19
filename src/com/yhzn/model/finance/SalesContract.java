@@ -3,6 +3,7 @@ package com.yhzn.model.finance;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
 
 import org.springframework.format.annotation.DateTimeFormat;
 
@@ -49,6 +50,10 @@ public class SalesContract implements Serializable{
 	//签订时间
 	@DateTimeFormat(pattern="yyyy-MM-dd")
 	private Date signDate;
+	
+	
+	private List<SalesContract> salesContracts;
+	
 	public String getId() {
 		return id;
 	}
@@ -154,6 +159,12 @@ public class SalesContract implements Serializable{
 	}
 	public static long getSerialversionuid() {
 		return serialVersionUID;
+	}
+	public List<SalesContract> getSalesContracts() {
+		return salesContracts;
+	}
+	public void setSalesContracts(List<SalesContract> salesContracts) {
+		this.salesContracts = salesContracts;
 	}
 	
 	

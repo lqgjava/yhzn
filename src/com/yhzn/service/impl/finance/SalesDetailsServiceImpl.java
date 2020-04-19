@@ -30,6 +30,7 @@ public class SalesDetailsServiceImpl implements SalesDetailsService {
 	@Override
 	public Map<String, Object> addSalesDetails(SalesDetails salesDetails, User user) {
 		salesDetails.setId(UUID.randomUUID().toString().replace("-", ""));
+		salesDetails.setAcceptId(UUID.randomUUID().toString().replace("-", ""));
 		salesDetails.setCreateName(user.getCreateName());
 		salesDetails.setCreateDate(new Date());
 		Map<String, Object> map = new HashMap<String,Object>();
@@ -48,7 +49,7 @@ public class SalesDetailsServiceImpl implements SalesDetailsService {
 	@Override
 	public List<SalesDetails> querySalesDetailsList(PageBounds bounds, Map<String, Object> parameter) {
 		// TODO Auto-generated method stub
-		return null;
+		return salesDetailsDao.querySalesDetailsList(bounds, parameter);
 	}
 
 	@Override
